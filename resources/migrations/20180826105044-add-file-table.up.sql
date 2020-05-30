@@ -1,0 +1,9 @@
+CREATE TABLE file (
+	id SERIAL PRIMARY KEY,
+	user_id INTEGER REFERENCES users (id) ON DELETE SET NULL,
+	type VARCHAR(50) NOT NULL,
+	name VARCHAR(50) NOT NULL,
+	data BYTEA,
+	created_at TIMESTAMP NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+	updated_at TIMESTAMP NOT NULL DEFAULT (now() AT TIME ZONE 'utc')	
+);

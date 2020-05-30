@@ -1,0 +1,1 @@
+DROP TABLE threaded_comment CASCADE;
