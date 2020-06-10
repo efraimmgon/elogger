@@ -16,15 +16,6 @@
            resolvers/threaded-comment-registry
            resolvers/user-registry]))
 
-(defn custom-map-reader
-  [{:keys [ast query] :as env}]
-  (prn 'query query)
-  (prn 'entity (p/entity env))
-  (prn 'key (:key ast))
-  (clojure.pprint/pprint (find (p/entity env) (:key ast)))
-  (p/map-reader env))
-
-
 
 (def parser*
   (p/parser
