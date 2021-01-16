@@ -64,7 +64,8 @@
 (defresolver user->profile [env {:keys [users/id]}]
   {::pc/input #{:users/id}
    ::pc/output [{:users/profile [:profile/id]}]}
-  (let [ret (-> (get-profile-by-user-id id) (select-keys [:profile/id]))]
+  (let [ret (-> (get-profile-by-user-id id) 
+                (select-keys [:profile/id]))]
     (when (seq ret)
       {:users/profile ret})))
 
@@ -130,7 +131,8 @@
    ::pc/output [{:page/author [:users/id]}]}
   (some->>
     (get-page-by-id id)
-    :page/author-id (hash-map :users/id)
+    :page/author-id 
+    (hash-map :users/id)
     (hash-map :page/author)))
       
 (def page-registry
@@ -169,7 +171,8 @@
    ::pc/output [{:likes/author [:users/id]}]}
   (some->>
     (get-by-id id)
-    :likes/user-id (hash-map :users/id)
+    :likes/user-id 
+    (hash-map :users/id)
     (hash-map :likes/author)))
 
 (def like-registry
@@ -241,7 +244,8 @@
    ::pc/output [{:threaded-comment/author [:users/id]}]}
   (some->>
     (get-comment-by-id id)
-    :threaded-comment/author-id (hash-map :users/id)
+    :threaded-comment/author-id 
+    (hash-map :users/id)
     (hash-map :threaded-comment/author)))
 
 (def threaded-comment-registry
@@ -296,7 +300,8 @@
   {::pc/input #{:blog-post/id}
    ::pc/output [{:blog-post/author [:users/id]}]}
   (some->> (get-post-by-id id)
-           :blog-post/author-id (hash-map :users/id)
+           :blog-post/author-id 
+           (hash-map :users/id)
            (hash-map :blog-post/author)))
 
 (def blog-post-registry

@@ -82,10 +82,6 @@
          :blog-post-id (:blog-post/id params)}))))
 
 
-(comment)
-
-
-
 
 (comment
   (take 5 (get-all-comments))

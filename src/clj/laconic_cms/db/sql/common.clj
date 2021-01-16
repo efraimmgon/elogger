@@ -8,25 +8,51 @@
 ; Columns
 
 (def user-columns
-  [:users/id, :users/username,
-   :users/email, :users/admin, :users/last-login, :users/is-active,
-   :users/created-at, :users/updated-at, :users/password])
+  [:users/id, 
+   :users/username,
+   :users/email, 
+   :users/admin, 
+   :users/last-login, 
+   :users/is-active,
+   :users/created-at, 
+   :users/updated-at, 
+   :users/password])
 
 (def profile-columns
-  [:profile/id, :profile/user-id, :profile/first-name
-   :profile/last-name, :profile/bio, :profile/profile-picture-id
-   :profile/created-at, :profile/updated-at])
+  [:profile/id, 
+   :profile/user-id, 
+   :profile/first-name
+   :profile/last-name, 
+   :profile/bio, 
+   :profile/profile-picture-id
+   :profile/created-at, 
+   :profile/updated-at])
 
 (def page-columns
-  [:page/id, :page/title, :page/subtitle, :page/status, :page/content,
-   :page/featured-img-id, :page/author-id, :page/created-at, :page/updated-at,
-   :page/published-at, :page/expires-at])
+  [:page/id, 
+   :page/title, 
+   :page/subtitle, 
+   :page/status, 
+   :page/content,
+   :page/featured-img-id, 
+   :page/author-id, 
+   :page/created-at, 
+   :page/updated-at,
+   :page/published-at, 
+   :page/expires-at])
 
 (def blog-post-columns
-  [:blog-post/id, :blog-post/title, :blog-post/subtitle,
-   :blog-post/status, :blog-post/content, :blog-post/author-id,
-   :blog-post/featured-img-id, :blog-post/created-at, :blog-post/updated-at,
-   :blog-post/published-at, :blog-post/expires-at])
+  [:blog-post/id, 
+   :blog-post/title, 
+   :blog-post/subtitle,
+   :blog-post/status, 
+   :blog-post/content, 
+   :blog-post/author-id,
+   :blog-post/featured-img-id, 
+   :blog-post/created-at, 
+   :blog-post/updated-at,
+   :blog-post/published-at, 
+   :blog-post/expires-at])
 
 (def threaded-comment-columns
   [:threaded-comment/id 

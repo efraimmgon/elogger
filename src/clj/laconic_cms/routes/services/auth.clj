@@ -24,20 +24,6 @@
 ; Helpers
 ; ------------------------------------------------------------------------------  
 
-(defn handle-registration-error [e]
-  (if (and (instance? java.sql.SQLException e)
-           (-> e
-               .getNextException
-               .getMessage
-               (.startsWith "ERROR: duplicate key value")))
-    (response/precondition-failed
-      {:result :error
-       :message "user with the selected username already exists"})
-    (do (log/error e)
-        (response/internal-server-error
-          {:result :error
-           :message "server error occurred while adding the user"}))))
-
 (defn update-last-login! [user]
   (db/update-user!
     (assoc user :users/last-login (common/now))))
@@ -58,37 +44,36 @@
 ; ------------------------------------------------------------------------------
 
 (defn register!
-  "Creates a new user and profile, and logs him in."
+  "Create a new user and profile, and log him in."
   [{:keys [session]} user]
-  (try
-    (db/create-user-with-profile!
-      (-> user
-          (select-keys sqlcommon/user-columns)
-          (assoc :users/last-login (common/now))
-          (update :users/password hashers/derive)))
-    (let [user (db/get-user-by-username (:users/username user))]
-      (-> user
-          response/ok
-          (assoc-in [:session :identity] user)))))
+  (db/create-user-with-profile!
+    (-> user
+        (select-keys sqlcommon/user-columns)
+        (assoc :users/last-login (common/now))
+        (update :users/password hashers/derive)))
+  (let [user (db/get-user-by-username (:users/username user))]
+    (-> user
+        response/ok
+        (assoc-in [:session :identity] user))))
 
 (defn login!
   "Update user's last login and return the record if user exists and
   the credentials match. Otherwise, return response/unauthorized."
   [{:keys [session]} auth]
   (if-let [user (-> auth decode-auth authenticate)]
-    (do ;; Update the last-login field:
+    (let [now (common/now)]
       (db/update-user!
         (-> (select-keys user sqlcommon/user-columns)
-            (assoc :users/last-login (common/now))))
-      ;; Return the user's identity assoc'ed to the session:
+            (assoc :users/last-login now)))
       (-> user
+          (assoc :users/last-login now)
           response/ok
           (assoc-in [:session :identity] user)))
     (response/unauthorized {:result :unauthorized
                             :message "login failure"})))
 
 (defn logout!
-  "Logs the user out by resetting the session to nil."
+  "Log the user out by resetting the session to nil."
   []
   (-> {:result :ok}
       response/ok

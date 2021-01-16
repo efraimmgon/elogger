@@ -103,6 +103,7 @@
                        (-> root-comments
                            rand-nth
                            :threaded-comment/id))
+          ;; 50% chance we'll create a root comment or reply to a root comment.
           params {:blog-post/id blog-post-id
                   :threaded-comment/author-id user-id
                   :threaded-comment/title (words 5)
@@ -140,7 +141,10 @@
     ;;; A user should have, at most, 1 like per post or comment.
     (println "Creating likes for blog posts")
     (doseq [bpid blog-post-id-seq]
-      (doseq [uid (-> user-id-seq count rand-int inc
+      (doseq [uid (-> user-id-seq 
+                      count 
+                      rand-int 
+                      inc
                       (take user-id-seq))]
         (blog-post/like! 
           (merge bpid uid))))

@@ -109,15 +109,14 @@
                                               :profile/last-name
                                               :users/email])}
              :responses {200 {:body :result/Result}}
-             :handler (fn [{:keys [parameters] :as req}]
+             :handler (fn [{:keys [parameters]}]
                         (user/create-user-with-profile!
                           (:body parameters)))}}]
     ["/{users/id}"
      {:parameters {:path (s/keys :req [:users/id])}
       :get {:summary "Return a user record by id."
             :responses {200 {:body :users/User}}
-            :handler (fn [{:keys [parameters] :as req}]
-                       (ok {:result :ok})
+            :handler (fn [{:keys [parameters]}]
                        (user/get-user
                          (get-in parameters [:path :users/id])))}
       :put {:summary "Update a user record with params."
@@ -224,9 +223,12 @@
                                                :threaded-comment/author-name])}
               :responses {200 {:body :result/Result}}
               :handler (fn [{:keys [parameters] :as req}]
-                         (blog-post/create-comment!
-                           (merge (:path parameters)
-                                  (:body parameters))))}}]]
+                         (if (authenticated? req)
+                           (blog-post/create-comment!
+                             (merge (:path parameters)
+                                    (:body parameters)))
+                           (forbidden
+                            {:error-msg "You must have an account to comment."})))}}]]   
 
     ["/comments/all"
      {:get {:summary "Get all comment records for all blog posts."
@@ -332,6 +334,9 @@
        ; preventing them from retracting their opinions, since
        ; they can still delete their comments (but only if they were
        ; registered).
+       ; Perhaps the best solution would be to allow the users to edit their
+       ; comments, but we would keep a record of the previous comment for
+       ; future reference.
        :put {:summary "Update a comment record by id."
              :parameters {:body (s/keys :req [:threaded-comment/body]
                                         :opt [:threaded-comment/is-approved])}
@@ -380,11 +385,6 @@
                               {:error-msg "Action not permited for this user."}))))}}]
 
 
-
-
-
-   ["/ping"
-    {:get (constantly (ok {:message "ping ping"}))}]
 
 
    ["/math"
