@@ -77,17 +77,15 @@
 ; ------------------------------------------------------------------------------
 ; MISC
 ; ------------------------------------------------------------------------------
+
 (defn card [{:keys [title subtitle content footer attrs]}]
   [:div.card
    attrs
-   [:div.card-body
-     [:h4.card-title.text-center title]
-     (when subtitle
-       [:p.card-category subtitle])
-     [:div.card-text
-      content]
-     [:div.card-footer
-      footer]]])
+   [:div.content
+    (when title [:h4.title title])
+    (when subtitle [:p.category subtitle])
+    content
+    (when footer [:div.footer footer])]])
 
 
 (defn breadcrumbs [& items]

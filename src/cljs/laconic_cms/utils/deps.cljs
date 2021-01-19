@@ -12,9 +12,6 @@
 ; the modules as well, so it's loaded only once, no matter how many times 
 ; it's requested.
 
-; How do I define a dependency?
-; A dependency must have an identification and a source file.
-
 ;;; Topological Sort
 
 (defn without
@@ -141,7 +138,8 @@
     (doseq [id (->> deps
                     (select-keys (:deps/deps @config))
                     (reduce-kv #(assoc % %2 (:dep/deps %3)) {})
-                    topological-sort)]
+                    topological-sort
+                    reverse)]
       (when-not (dep-loaded? id)
         (let [dep (get-dep id)
               m {:id id :dep dep}]

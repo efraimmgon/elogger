@@ -36,6 +36,8 @@
                  [nav-link "#/" "Home" :home]
                  [nav-link "#/about" "About" :about]]]]))
 
+
+
 (defn about-page []
   [:section.section>div.container>div.content
    [:img {:src "/img/warning_clojure.png"}]])
