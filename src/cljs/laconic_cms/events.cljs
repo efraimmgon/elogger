@@ -80,25 +80,25 @@
                   :on-success       [:set-docs]}}))
 
 (def main-deps
-  [{:dep/id "material-kit.css"
+  [{:dep/id "material-kit-css"
     :dep/href "/css/material-kit.css"}
-   {:dep/id "demo.css"
+   {:dep/id "demo-css"
     :dep/href "/css/demo.css"}
-   {:dep/id "material-kit.js"
+   {:dep/id "material-kit-js"
     :dep/src "/js/material-kit.js"}])
 
 (def admin-deps
-  [{:dep/id "material-dashboard.css"
+  [{:dep/id "material-dashboard-css"
     :dep/href "/css/material-dashboard.css"}
-   {:dep/id "perfect-scrollbar.jquery.min.js"
-    :dep/src "/js/perfect-scrollbar.jquery.min.js"}
-   {:dep/id "sweetalert2.js"
-    :dep/src "/js/sweetalert2.js"}
-   {:dep/id "jasny-bootstrap.min.js"
-    :dep/src "/js/jasny-bootstrap.min.js"}
-   {:dep/id "chartist.min.js"
-    :dep/src "/js/chartist.min.js"}
-   {:dep/id "material-dashboard.js"
+   {:dep/id "perfect-scrollbar-js"
+    :dep/src "/js/plugins/perfect-scrollbar.jquery.min.js"}
+   {:dep/id "sweetalert2-js"
+    :dep/src "/js/plugins/sweetalert2.js"}
+   {:dep/id "jasny-bootstrap-js"
+    :dep/src "/js/plugins/jasny-bootstrap.min.js"}
+   {:dep/id "chartist-js"
+    :dep/src "/js/plugins/chartist.min.js"}
+   {:dep/id "material-dashboard-js"
     :dep/src "/js/material-dashboard.js"}])
 
 (rf/reg-event-fx

@@ -65,5 +65,9 @@
 (comment
   
   (reset-db)
-  (create-migration "add-profile-table"))
+  (create-migration "add-profile-table")
                       
+                      
+  (in-ns 'laconic-cms.utils.deps)
+  (load-file "src/cljs/laconic_cms/utils/deps.cljs")
+  (sel1 (keyword "#sweetalert2.js")))

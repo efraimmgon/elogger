@@ -1,0 +1,35 @@
+# TODO
+
+- git save
+
+- resources
+  > css
+  > js
+  > imgs
+
+I'm wondering if I should add the deps to the home page or through my
+deps-managing-system. I think I should use the system. Or I could load them by
+default, and register them in the system
+
+-> add the default assets to the home.html;
+-> register them on the :init! handler
+-> copy assets to the resources folder
+
+- navbar
+
+- home page
+  > logged out: feed
+  > logged in: feed
+  > logged out / in: landing page
+
+- blog
+  > blog posts
+  > blog post
+
+- ecommerce:
+  > store page
+  > product page
+
+- profile page
+
+- admin dashboard ?

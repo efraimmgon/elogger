@@ -167,11 +167,14 @@
 (defn with-deps 
   "Assynchronously load dependencies to the window. Takes a set of deps.
   Its values must be the desired ids provided to `add-deps!`.
+  :dep/id must be a valid keyword string.
   Arg map: {:deps dep-set       ; A set of dep/id
             :loading component
             :loaded component}"
   [{:keys [deps loading loaded]}]
   (when (seq deps)
+    (prn 'difference)
+    (prn (difference (:deps/loaded @config) deps))
     ;; Unload deps from the page that won't be required.
     (unload-deps! (difference (:deps/loaded @config) deps))
     (swap! config update :deps/loaded intersection deps))
