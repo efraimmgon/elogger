@@ -1,11 +1,11 @@
 /*!
 
  =========================================================
- * Material Kit - v2.0.4
+ * Material Kit - v2.0.7
  =========================================================
 
  * Product Page: https://www.creative-tim.com/product/material-kit
- * Copyright 2018 Creative Tim (http://www.creative-tim.com)
+ * Copyright 2020 Creative Tim (http://www.creative-tim.com)
 
  * Designed by www.invisionapp.com Coded by www.creative-tim.com
 
@@ -25,8 +25,8 @@ $(document).ready(function() {
 
   window_width = $(window).width();
 
-  $navbar = $('.navbar[color-on-scroll]');
-  scroll_distance = $navbar.attr('color-on-scroll') || 500;
+  $navbar = $('.navbar[coloronscroll]');
+  scroll_distance = $navbar.attr('coloronscroll') || 500;
 
   $navbar_collapse = $('.navbar').find('.navbar-collapse');
 
@@ -36,7 +36,7 @@ $(document).ready(function() {
   // Activate Popovers
   $('[data-toggle="popover"]').popover();
 
-  if ($('.navbar-color-on-scroll').length != 0) {
+  if ($('.navbar-coloronscroll').length != 0) {
     $(window).on('scroll', materialKit.checkScrollForTransparentNavbar);
   }
 
@@ -159,12 +159,12 @@ materialKit = {
     if ($(document).scrollTop() > scroll_distance) {
       if (materialKit.misc.transparent) {
         materialKit.misc.transparent = false;
-        $('.navbar-color-on-scroll').removeClass('navbar-transparent');
+        $('.navbar-coloronscroll').removeClass('navbar-transparent');
       }
     } else {
       if (!materialKit.misc.transparent) {
         materialKit.misc.transparent = true;
-        $('.navbar-color-on-scroll').addClass('navbar-transparent');
+        $('.navbar-coloronscroll').addClass('navbar-transparent');
       }
     }
   }, 17)

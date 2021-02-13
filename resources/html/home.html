@@ -28,7 +28,14 @@
       </section>
     </div>
 
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
     {% style "/css/screen.css" %}
+
+    <!--   Core JS Files   -->
+
 
     <!--   Core JS Files   -->
     <script 
@@ -36,12 +43,20 @@
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
       crossorigin="anonymous">
     </script>
-    {% script "/js/popper.min.js" %}
+
+    {% script "/js/core/popper.min.js" %}
+    {% script "/js/core/bootstrap-material-design.min.js" %}
+    {% script "/js/plugins/moment.min.js" %}
+    {% script "/js/plugins/bootstrap-datetimepicker.js" %}
+    {% script "/js/plugins/nouislider.min.js" %}
 
 
     <script type="text/javascript">
         var csrfToken = "{{csrf-token}}";
     </script>
+
     {% script "/js/app.js" %}
+
+
   </body>
 </html>

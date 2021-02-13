@@ -79,51 +79,33 @@
                   :response-format (ajax/raw-response-format)
                   :on-success       [:set-docs]}}))
 
+(def main-deps
+  [{:dep/id "material-kit.css"
+    :dep/href "/css/material-kit.css"}
+   {:dep/id "demo.css"
+    :dep/href "/css/demo.css"}
+   {:dep/id "material-kit.js"
+    :dep/src "/js/material-kit.js"}])
+
+(def admin-deps
+  [{:dep/id "material-dashboard.css"
+    :dep/href "/css/material-dashboard.css"}
+   {:dep/id "perfect-scrollbar.jquery.min.js"
+    :dep/src "/js/perfect-scrollbar.jquery.min.js"}
+   {:dep/id "sweetalert2.js"
+    :dep/src "/js/sweetalert2.js"}
+   {:dep/id "jasny-bootstrap.min.js"
+    :dep/src "/js/jasny-bootstrap.min.js"}
+   {:dep/id "chartist.min.js"
+    :dep/src "/js/chartist.min.js"}
+   {:dep/id "material-dashboard.js"
+    :dep/src "/js/material-dashboard.js"}])
+
 (rf/reg-event-fx
   :add-deps!
   base-interceptors
   (fn [_ _]
-    (let [dps [;;; Stylesheets
-               {:dep/id "bootstrap.css"
-                :dep/href "/css/bootstrap.min.css"}
-               {:dep/id "gsdk.css"
-                :dep/href "/css/gsdk.css"
-                :dep/deps #{"bootstrap.css"}}
-               {:dep/id "demo.css"
-                :dep/href "/css/demo.css"
-                :dep/deps #{"gsdk.css"}}
-               {:dep/id "material-dashboard-css"
-                :dep/href "/css/material-dashboard.css"}
-               ;;; Fonts and icons
-               {:dep/id "font-awesome.css"
-                :dep/href "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"}
-               {:dep/id "open-sans.css"
-                :dep/href "https://fonts.googleapis.com/css?family=Grand+Hotel|Open+Sans:400,300"}
-               {:dep/id "pe-icon-7-stroke.css"
-                :dep/href "/css/pe-icon-7-stroke.css"}
-               ;;; JS Core
-               {:dep/id "jquery-ui.js"
-                :dep/src "/js/jquery-ui.custom.min.js"}
-               {:dep/id "bootstrap.js"
-                :dep/src "/js/bootstrap.js"
-                :dep/deps #{"jquery-ui.js"}}
-               ;;; gsdk plugins
-               {:dep/id "gsdk-checkbox.js"
-                :dep/src "/js/gsdk-checkbox.js"}
-               {:dep/id "gsdk-morphing.js"
-                :dep/src "/js/gsdk-morphing.js"}
-               {:dep/id "gsdk-radio.js"
-                :dep/src "/js/gsdk-radio.js"}
-               {:dep/id "gsdk-bootstrapswitch.js"
-                :dep/src "/js/gsdk-bootstrapswitch.js"}
-               ;;; other plugins
-               {:dep/id "bootstrap-select.js"
-                :dep/src "/js/bootstrap-select.js"}
-               {:dep/id "bootstrap-datepicker.js"
-                :dep/src "/js/bootstrap-datepicker.js"}
-               {:dep/id "chartist.js"
-                :dep/src "/js/chartist.min.js"}]]
-      (deps/add-deps! dps))
+    (deps/add-deps! (into main-deps admin-deps))
     nil))
 
 

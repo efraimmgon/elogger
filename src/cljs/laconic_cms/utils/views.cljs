@@ -27,33 +27,36 @@
          "OK"]]}]))
 
 (defn nav-item [attrs title]
-  [:li
-   [:a attrs
+  [:li.nav-item
+   [:a.nav-link
+    attrs
     title]])
 
-(defn dropdown-nav-item [title & navs]
-  [:li.dropdown
-   [:a.dropdown-toggle
-    {:data-toggle "dropdown"}
-    title]
-   (into
-     [:ul.dropdown-menu.dropdown-with-icons]
-     navs)])
+(defn dropdown-nav-item [title & items]
+ [:li.dropdown.nav-item
+  [:a.dropdown-toggle.nav-link
+   {:data-toggle "dropdown"}
+   title]
+  (into [:div.dropdown-menu]
+    items)])
+
+(defn dnav-item [attrs title]
+  [:a.dropdown-item attrs title])
 
 (defn nav-menu [current-user]
   [:div.collapse.navbar-collapse
-   [:ul.nav.navbar-nav.navbar-right
+   [:ul.navbar-nav.ml-auto
     [nav-item {:href (rfe/href :home)} "Home"]
     [nav-item {:href (rfe/href :blog/list)} "Blog"]
     (when @current-user
       [dropdown-nav-item
        (:users/username @current-user)
-       [nav-item {:href (rfe/href :profile/view (select-keys @current-user [:users/id]))}
+       [dnav-item {:href (rfe/href :profile/view (select-keys @current-user [:users/id]))}
         "Profile"]
        (when (:users/admin @current-user)
-         [nav-item {:href (rfe/href :admin)}
+         [dnav-item {:href (rfe/href :admin)}
           "Admin"])
-       [nav-item {:on-click #(dispatch-n [:auth/logout]
+       [dnav-item {:on-click #(dispatch-n [:auth/logout]
                                          [:navigate! :home])}
         "Logout"]])
     ;; LOGIN
@@ -67,207 +70,56 @@
                                 (rf/dispatch [:modal register-modal]))}
        "Register"])]])
 
-
 (defn navbar []
   (r/with-let [current-user (rf/subscribe [:identity])]
-    [:nav.navbar.navbar-fixed-top.navbar-default
-     {:role "navigation"}
+    [:nav#sectionsNav.navbar.navbar-transparent.navbar-coloronscroll.fixed-top.navbar-expand-lg
+     {:coloronscroll "100"}
      [:div.container
-      (comment "<!-- Brand and toggle get grouped for better mobile display -->")
-      [:div.navbar-header
-       [:button#menu-toggle.navbar-toggle
-        {:type "button"}
-        [:span.sr-only "Toggle navigation"]
-        [:span.icon-bar.bar1]
-        [:span.icon-bar.bar2]
-        [:span.icon-bar.bar3]]
+      [:div.navbar-translate
        [:a.navbar-brand
         {:href "/"}
-        "Laconic CMS"]]
-      (comment "<!-- Collect the nav links, forms, and other content for toggling -->")
+        "Laconic CMS "]
+       [:button.navbar-toggler
+        {:aria-label "Toggle navigation",
+         :aria-expanded "false",
+         :data-toggle "collapse",
+         :type "button"}
+        [:span.sr-only "Toggle navigation"]
+        [:span.navbar-toggler-icon]
+        [:span.navbar-toggler-icon]
+        [:span.navbar-toggler-icon]]]
       [nav-menu current-user]]]))
 
 (defn footer []
- [:footer.footer.footer-black
-  [:div.container
-   [:nav.pull-left
-    [:ul
-     [:li
-      [:a
-       {:href "#"}
-       "Home"]]
-     [:li
-      [:a
-       {:href "#"}
-       "Company"]]
-     [:li
-      [:a
-       {:href "#"}
-       "Portfolio"]]
-     [:li
-      [:a
-       {:href "#"}
-       "Blog"]]]]
-   [:div.social-area.pull-right
-    [:a.btn.btn-social.btn-facebook.btn-simple
-     [:i.fa.fa-facebook-square]]
-    [:a.btn.btn-social.btn-twitter.btn-simple [:i.fa.fa-twitter]]
-    [:a.btn.btn-social.btn-pinterest.btn-simple [:i.fa.fa-pinterest]]]
-   [:div.copyright
-    (str "© " (.getFullYear (js/Date.)) " Laconic CMS")]]])
-
-(defn footer-2 []
- [:footer.footer.footer-big.footer-black
-  [:div.container
-   [:div.row
-    [:div.col-md-2
-     [:div.form-group
-      [:select.selectpicker
-       {:data-menu-style "dropdown-blue",
-        :data-style "btn-default btn-block",
-        :name "huge"
-        :default-value "en"}
-       [:option {:value "id"} "Bahasa Indonesia"]
-       [:option {:value "ms"} "Bahasa Melayu"]
-       [:option {:value "ca"} "Català"]
-       [:option {:value "da"} "Dansk"]
-       [:option {:value "de"} "Deutsch"]
-       [:option {:value "en"} "English"]
-       [:option {:value "es"} "Español"]
-       [:option {:value "el"} "Eλληνικά"]
-       [:option {:value "fr"} "Français"]
-       [:option {:value "it"} "Italiano"]
-       [:option {:value "hu"} "Magyar"]
-       [:option {:value "nl"} "Nederlands"]
-       [:option {:value "no"} "Norsk"]
-       [:option {:value "pl"} "Polski"]
-       [:option {:value "pt"} "Português"]
-       [:option {:value "fi"} "Suomi"]
-       [:option {:value "sv"} "Svenska"]
-       [:option {:value "tr"} "Türkçe"]
-       [:option {:value "is"} "Íslenska"]
-       [:option {:value "cs"} "Čeština"]
-       [:option {:value "ru"} "Русский"]
-       [:option {:value "th"} "ภาษาไทย"]
-       [:option {:value "zh"} "中文 (简体)"]
-       [:option {:value "zh-TW"} "中文 (繁體)"]
-       [:option {:value "ja"} "日本語"]
-       [:option {:value "ko"} "한국어"]]]
-     [:div.form-group
-      [:select.selectpicker
-       {:data-menu-style "dropdown-blue",
-        :data-style "btn-default btn-block",
-        :name "huge"
-        :default-value "USD"}
-       [:option {:value "ARS"} "ARS"]
-       [:option {:value "AUD"} "AUD"]
-       [:option {:value "BRL"} "BRL"]
-       [:option {:value "CAD"} "CAD"]
-       [:option {:value "CHF"} "CHF"]
-       [:option {:value "CNY"} "CNY"]
-       [:option {:value "CZK"} "CZK"]
-       [:option {:value "DKK"} "DKK"]
-       [:option {:value "EUR"} "EUR"]
-       [:option {:value "GBP"} "GBP"]
-       [:option {:value "HKD"} "HKD"]
-       [:option {:value "HUF"} "HUF"]
-       [:option {:value "IDR"} "IDR"]
-       [:option {:value "ILS"} "ILS"]
-       [:option {:value "INR"} "INR"]
-       [:option {:value "JPY"} "JPY"]
-       [:option {:value "KRW"} "KRW"]
-       [:option {:value "MYR"} "MYR"]
-       [:option {:value "MXN"} "MXN"]
-       [:option {:value "NOK"} "NOK"]
-       [:option {:value "NZD"} "NZD"]
-       [:option {:value "PHP"} "PHP"]
-       [:option {:value "PLN"} "PLN"]
-       [:option {:value "RUB"} "RUB"]
-       [:option {:value "SEK"} "SEK"]
-       [:option {:value "SGD"} "SGD"]
-       [:option {:value "TWD"} "TWD"]
-       [:option {:value "USD"} "USD"]
-       [:option {:value "VND"} "VND"]
-       [:option {:value "ZAR"} "ZAR"]]]]
-    [:div.col-md-2.col-md-offset-1
-     [:h5.title "Company"]
-     [:nav
-      [:ul
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                    Home\n                                "]]
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                   Find offers\n                                "]]
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                    Discover Projects\n                                "]]
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                    Our Portfolio\n                                "]]
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                    About Us\n                                "]]]]]
-    [:div.col-md-3.col-md-offset-1
-     [:h5.title " Help and Support"]
-     [:nav
-      [:ul
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                   Contact Us\n                                "]]
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                   How it works\n                                "]]
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                    Terms & Conditions\n                                "]]
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                    Company Policy\n                                "]]
-       [:li
-        [:a
-         {:href "#"}
-         "\n                                   Money Back\n                                "]]]]]
-    [:div.col-md-3
-     [:h5.title "Latest News"]
-     [:nav
-      [:ul
-       [:li
-        [:a
-         {:href "#"}
-         [:i.fa.fa-twitter]
-         " "
-         [:b "Get Shit Done"]
-         "\n                                   The best kit in the market is here, just give it a try and let us...\n                                   "]
-        [:hr.hr-small]]
-       [:li
-        [:a
-         {:href "#"}
-         [:i.fa.fa-twitter]
-         "\n                                   We've just been featured on "
-         [:b " Awwwards Website"]
-         "! Thank you everybody for...\n                                "]]]]]]
-   [:hr]
-   [:div.social-area.text-center
-    [:h5 "Join us on"]
-    [:a.btn.btn-social.btn-round {:href "#"} [:i.fa.fa-facebook]]
-    [:a.btn.btn-social.btn-round {:href "#"} [:i.fa.fa-twitter]]
-    [:a.btn.btn-social.btn-round {:href "#"} [:i.fa.fa-google-plus]]
-    [:a.btn.btn-social.btn-round {:href "#"} [:i.fa.fa-pinterest]]
-    [:a.btn.btn-social.btn-round {:href "#"} [:i.fa.fa-linkedin]]]
-   [:div.copyright
-    "\n                © 2016 Creative Tim, made with love\n            "]]])
-
-
+  [:footer.footer.footer-default
+   [:div.container
+    [:nav.float-left
+     [:ul
+      [:li
+       [:a
+        {:href "https://www.creative-tim.com/"}
+        "Laconic CMS"]]
+      [:li
+       [:a
+        {:href "https://www.creative-tim.com/presentation"}
+        "\n              About Us\n            "]]
+      [:li
+       [:a
+        {:href "https://www.creative-tim.com/blog"}
+        "\n              Blog\n            "]]
+      [:li
+       [:a
+        {:href "https://www.creative-tim.com/license"}
+        "\n              Licenses\n            "]]]]
+    [:div.copyright.float-right
+     (str "© " (.getFullYear (js/Date.))
+          ", made with ")
+     [:i.material-icons "favorite"]
+     " by "
+     [:a
+      {:target "_blank", :href "https://github.com/efraimmgon/laconic-cms"}
+      "Laconic CMS"]
+     " for a better web."]]])
 
 ;;; Core
 
@@ -285,4 +137,4 @@
   [base-ui
    [navbar]
    body
-   [footer-2]])
+   [footer]])
