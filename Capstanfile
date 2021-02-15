@@ -9,7 +9,7 @@ base: cloudius/osv-openjdk8
 #
 # The command line passed to OSv to start up the application.
 #
-cmdline: /java.so -jar /laconic-cms/app.jar
+cmdline: /java.so -jar /elogger/app.jar
 
 #
 # The command to use to build the application.
@@ -24,5 +24,5 @@ cmdline: /java.so -jar /laconic-cms/app.jar
 # List of files that are included in the generated image.
 #
 files:
-  /laconic-cms/app.jar: ./target/uberjar/laconic-cms.jar
+  /elogger/app.jar: ./target/uberjar/elogger.jar
 

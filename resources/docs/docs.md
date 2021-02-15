@@ -4,7 +4,7 @@ This page will help guide you through the first steps of building your site.
 
 <p class="title is-5">Why are you seeing this page?</p>
 
-The `home-routes` handler in the `laconic-cms.routes.home` namespace
+The `home-routes` handler in the `elogger.routes.home` namespace
 defines the route that invokes the `home-page` function whenever an HTTP
 request is made to the `/` URI using the `GET` method.
 
@@ -17,7 +17,7 @@ request is made to the `/` URI using the `GET` method.
            (response/header "Content-Type" "text/plain; charset=utf-8"))))
 ```
 
-The `home-page` function will in turn call the `laconic-cms.layout/render` function
+The `home-page` function will in turn call the `elogger.layout/render` function
 to render the HTML content:
 
 ```
@@ -37,7 +37,7 @@ The rest of this page is rendered by ClojureScript found in the `src/cljs/laconi
 
 <p class="title is-5">Organizing the routes</p>
 
-The routes are aggregated and wrapped with middleware in the `laconic-cms.handler` namespace:
+The routes are aggregated and wrapped with middleware in the `elogger.handler` namespace:
 
 ```
 (defstate app
@@ -63,12 +63,12 @@ The second takes care of serializing and deserializing various encoding formats,
 
 <p class="title is-5">Managing your middleware</p>
 
-Request middleware functions are located under the `laconic-cms.middleware` namespace.
+Request middleware functions are located under the `elogger.middleware` namespace.
 
 This namespace is reserved for any custom middleware for the application. Some default middleware is
 already defined here. The middleware is assembled in the `wrap-base` function.
 
-Middleware used for development is placed in the `laconic-cms.dev-middleware` namespace found in
+Middleware used for development is placed in the `elogger.dev-middleware` namespace found in
 the `env/dev/clj/` source path.
 
 <a class="level-item button" href="http://www.luminusweb.net/docs/middleware.md">learn more about middleware »</a>
@@ -82,7 +82,7 @@ If you haven't already, then please follow the steps below to configure your dat
 * Create the database for your application.
 * Update the connection URL in the `dev-config.edn` and `test-config.edn` files with your database name and login credentials.
 * Run `lein run migrate` in the root of the project to create the tables.
-* Let `mount` know to start the database connection by `require`-ing `laconic-cms.db.core` in some other namespace.
+* Let `mount` know to start the database connection by `require`-ing `elogger.db.core` in some other namespace.
 * Restart the application.
 
 <a class="btn btn-primary" href="http://www.luminusweb.net/docs/database.md">learn more about database access »</a>

@@ -1,19 +1,19 @@
 {
         "calva.customREPLCommandSnippets": [
         {
-            "name": "Start laconic-cms Server",
+            "name": "Start elogger Server",
             "ns": "user",
             "repl": "clj",
             "snippet": "(start)"
         },
         {
-            "name": "Stop laconic-cms Server",
+            "name": "Stop elogger Server",
             "ns": "user",
             "repl": "clj",
             "snippet": "(stop)"
         },
         {
-            "name": "Restart laconic-cms Server",
+            "name": "Restart elogger Server",
             "ns": "user",
             "repl": "clj",
             "snippet": "(restart)"
@@ -21,7 +21,7 @@
     ],
     "calva.replConnectSequences": [
                 {
-            "name": "Server only - laconic-cms",
+            "name": "Server only - elogger",
             "projectType": "Leiningen",
             "afterCLJReplJackInCode": "(start)",
             "cljsType": "none",
@@ -32,7 +32,7 @@
             }
         },
         {
-            "name": "Server + Client – laconic-cms",
+            "name": "Server + Client – elogger",
             "projectType": "Leiningen",
             "afterCLJReplJackInCode": "(start)",
             "cljsType": {

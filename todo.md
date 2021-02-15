@@ -14,7 +14,7 @@ todo
 
 - template dispatching by multimethod
     + why? it's a why to decentralize and make it more simple
-    + laconic-cms.views
+    + elogger.views
     + admin.views
 
 - make error messages more informative and user friendly

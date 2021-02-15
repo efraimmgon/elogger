@@ -1,7 +1,7 @@
 FROM openjdk:8-alpine
 
-COPY target/uberjar/laconic-cms.jar /laconic-cms/app.jar
+COPY target/uberjar/elogger.jar /elogger/app.jar
 
 EXPOSE 3000
 
-CMD ["java", "-jar", "/laconic-cms/app.jar"]
+CMD ["java", "-jar", "/elogger/app.jar"]

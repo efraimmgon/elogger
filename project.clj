@@ -1,7 +1,7 @@
-(defproject laconic-cms "0.1.0-SNAPSHOT"
+(defproject elogger "0.1.0-SNAPSHOT"
 
   :description "A pragmatic cms for clojure."
-  :url "http://github.com/efraimmgon/laconic-cms"
+  :url "http://github.com/efraimmgon/elogger"
 
   :dependencies [[binaryage/oops "0.7.0"]
                  [bouncer "1.0.0"]
@@ -55,7 +55,7 @@
   :test-paths ["test/clj"]
   :resource-paths ["resources" "target/cljsbuild"]
   :target-path "target/%s/"
-  :main ^:skip-aot laconic-cms.core
+  :main ^:skip-aot elogger.core
 
   :plugins [[lein-cljsbuild "1.1.7"]] 
   :clean-targets ^{:protect false}
@@ -86,7 +86,7 @@
                  :externs ["react/externs/react.js"]}}}}
              
              :aot :all
-             :uberjar-name "laconic-cms.jar"
+             :uberjar-name "elogger.jar"
              :source-paths ["env/prod/clj" ]
              :resource-paths ["env/prod/resources"]}
 
@@ -111,9 +111,9 @@
                   :cljsbuild{:builds
                    {:app
                     {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                     :figwheel {:on-jsload "laconic-cms.core/mount-components"}
+                     :figwheel {:on-jsload "elogger.core/mount-components"}
                      :compiler
-                     {:main "laconic-cms.app"
+                     {:main "elogger.app"
                       :asset-path "/js/out"
                       :output-to "target/cljsbuild/public/js/app.js"
                       :output-dir "target/cljsbuild/public/js/out"
@@ -139,7 +139,7 @@
                     {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
                      :compiler
                      {:output-to "target/test.js"
-                      :main "laconic-cms.doo-runner"
+                      :main "elogger.doo-runner"
                       :optimizations :whitespace
                       :pretty-print true}}}}
                   
