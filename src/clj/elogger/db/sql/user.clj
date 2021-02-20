@@ -4,7 +4,7 @@
     [elogger.db.core :as db]
     [elogger.db.pathom :refer [parser]]
     [elogger.db.sql.common :as common]
-    [next.jdbc :as jdbc]))
+    [next.jdbc :as jdbc]))      
 
 ;;; ---------------------------------------------------------------------------
 ;;; Profile
@@ -87,6 +87,33 @@
   [id]
   (db/delete! "users" {:id id}))
 
+;;; ---------------------------------------------------------------------------
+;;; Office Hours
+
+(defn create-office-hours! [params]
+  (db/insert! "office_hours" params))
+
+(defn checkin! 
+  "Takes a user-id, lat, lng, and the user-agent, checking the user into his
+  office hours."
+  [params]
+  (jdbc/with-transaction [tx db/*db*]
+    (binding [db/*db* tx]
+      (update-user! {:users/is-checkedin true
+                     :users/id (:office-hours/user-id params)})
+      (create-office-hours! (assoc params :office-hours/status "checkin"))
+      {:result :ok})))
+
+(defn checkout!
+  "Takes a user-id, lat, lng, and the user-agent, checking the user out of
+  his office hours."
+  [params]
+  (jdbc/with-transaction [tx db/*db*]
+    (binding [db/*db* tx]
+      (update-user! {:users/is-checkedin false
+                     :users/id (:office-hours/user-id params)})
+      (create-office-hours! (assoc params :office-hours/status "checkout"))
+      {:result :ok})))
   
 (comment
   (->> (get-users)

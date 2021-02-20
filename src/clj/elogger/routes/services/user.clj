@@ -20,6 +20,7 @@
 (s/def :users/password string?)
 (s/def :users/admin (s/nilable boolean?))
 (s/def :users/is-active (s/nilable boolean?))
+(s/def :users/is-checkedin (s/nilable boolean?))
 (s/def :users/created-at ::common/date)
 (s/def :users/updated-at ::common/date)
 
@@ -30,6 +31,30 @@
 (s/def :profile/bio (s/nilable string?))
 (s/def :profile/created-at ::common/date)
 (s/def :profile/updated-at ::common/date)
+
+(s/def :office-hours/id ::common/id)
+(s/def :office-hours/user-id :users/id)
+(s/def :office-hours/status #{"checkin" "checkout"})
+(s/def :office-hours/created-at ::common/date)
+(s/def :office-hours/updated-at ::common/date)
+(s/def :office-hours/user-agent string?)
+(s/def :office-hours/lat float?)
+(s/def :office-hours/lng float?)
+
+;;; ---------------------------------------------------------------------------
+;;; OFFICE HOURS DOMAIN
+
+(s/def :office-hours/OfficeHours
+       (s/keys :req [:office-hours/id
+                     :office-hours/user-id
+                     :office-hours/created-at
+                     :office-hours/updated-at
+                     :office-hours/user-agent
+                     :office-hours/lat
+                     :office-hours/lng]))
+
+(s/def :office-hours/office-hours
+       (s/* :office-hours/OfficeHours))
 
 ;;; ---------------------------------------------------------------------------
 ;;; PROFILE DOMAIN

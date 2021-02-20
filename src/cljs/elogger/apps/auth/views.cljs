@@ -5,7 +5,99 @@
     [form-group modal]]
    [reagent.core :as r]
    [re-frame.core :as rf]
-   [elogger.utils.forms :refer [input]]))
+   [elogger.utils.forms :refer [input]]
+   [elogger.utils.views :refer [login-base-ui]]))
+
+
+(defn login-form-body [path]
+  [:div.card-body
+   [:div.input-group
+    [:div.input-group-prepend
+     [:span.input-group-text [:i.material-icons "face"]]]
+    [input {:type :text
+            :name (conj path :users/username)
+            :class "form-control"
+            :auto-focus true
+            :placeholder "Nome de usuário"}]]
+   [:div.input-group
+    [:div.input-group-prepend
+     [:span.input-group-text
+      [:i.material-icons "lock_outline"]]]
+    [input {:type :password
+            :name (conj path :users/password)
+            :class "form-control"
+            :placeholder "Senha"}]]])
+
+(defn login-form-ui [current-user]
+  (let [path [:auth/form]
+        fields (rf/subscribe path)]
+    (fn []
+      [:div.card.card-login
+       [:form.form
+        [:div.card-header.card-header-primary.text-center
+         [:h4.card-title "Login"]]
+        [login-form-body path]
+        [:div.footer.text-center
+         [:a.btn.btn-primary.btn-link.btn-wd.btn-lg
+          {:on-click #(rf/dispatch-sync
+                        [:auth/login {:params fields
+                                      :path path}])}
+          "Entrar"]]]])))
+
+(defn checkin-checkout-ui [current-user]
+  (let [path [:auth/form]
+        fields (rf/subscribe path)
+        loading-msg? (rf/subscribe [:query [:auth.check.notify/loading]])
+        geolocation-off? (rf/subscribe [:query [:auth.checkin/geolocation-off?]])
+        error (rf/subscribe [:query [:auth.checkin/error]])]
+    (fn []
+      [:div.card.card-login
+       [:form.form
+        [:div.card-header.card-header-primary.text-center
+         [:h4.card-title "Você está logado"]]
+         ;; BODY
+        [:div.card-body
+          [:h5.text-center (str (js/Date.))]
+          [:h5.text-center "Jornada: "
+           (if (:users/is-checkedin @current-user)
+             [:span.badge.badge-pill.badge-success "Iniciada"]
+             [:span.badge.badge-pill.badge-danger "Terminada"])]
+          (when @geolocation-off?
+            [:div.alert.alert-danger
+             "Para realizar o checkin ative o serviço de localização do seu 
+             aparelho e tente novamente!"])
+          (when @loading-msg?
+            [:div.alert.alert-warning
+             @loading-msg?])]
+        [:div.footer.text-center
+         (if (:users/is-checkedin @current-user)
+           [:a.btn.btn-primary.btn-link.btn-wd.btn-lg.btn-danger
+            {:on-click #(rf/dispatch-sync
+                          [:auth/checkout! current-user])
+             :disabled @geolocation-off?}
+            "Terminar o turno"]
+           [:a.btn.btn-primary.btn-link.btn-wd.btn-lg.btn-success
+            {:on-click #(rf/dispatch-sync
+                          [:auth/checkin! current-user])
+             :disabled @geolocation-off?}
+            "Iniciar o turno"])]]])))
+
+
+(defn home-ui []
+  (let [current-user (rf/subscribe [:identity])]
+    (fn []
+      [login-base-ui
+       [:div.page-header.header-filter
+        {:style {"backgroundImage" "url('/img/bg7.jpg')"
+                 "backgroundSize" "cover"
+                 "backgroundPosition" "top center"}}
+        [:div.container
+         [:div.row
+          [:div.col-lg-4.col-md-6.ml-auto.mr-auto
+           (if @current-user
+             [checkin-checkout-ui current-user]
+             [login-form-ui current-user])]]]]])))
+
 
 (defn login-form [path]
   [:div

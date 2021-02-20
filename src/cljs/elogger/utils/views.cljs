@@ -1,6 +1,5 @@
 (ns elogger.utils.views
   (:require
-    [elogger.apps.auth.views :refer [login-modal register-modal]]
     [elogger.utils.components :as c]
     [elogger.utils.deps :refer [with-deps]]
     [elogger.utils.events :refer [<sub dispatch-n]]
@@ -47,7 +46,7 @@
   [:div.collapse.navbar-collapse
    [:ul.navbar-nav.ml-auto
     [nav-item {:href (rfe/href :home)} "Home"]
-    [nav-item {:href (rfe/href :blog/list)} "Blog"]
+    ; [nav-item {:href (rfe/href :blog/list)} "Blog"]
     (when @current-user
       [dropdown-nav-item
        (:users/username @current-user)
@@ -58,17 +57,17 @@
           "Admin"])
        [dnav-item {:on-click #(dispatch-n [:auth/logout]
                                          [:navigate! :home])}
-        "Logout"]])
-    ;; LOGIN
-    (when-not @current-user
-      [nav-item {:on-click #(do (rf/dispatch-sync [:assoc-in [:auth/form] nil])
-                                (rf/dispatch [:modal login-modal]))}
-       "Login"])
-    ;; REGISTER
-    (when-not @current-user
-      [nav-item {:on-click #(do (rf/dispatch-sync [:assoc-in [:auth/form] nil])
-                                (rf/dispatch [:modal register-modal]))}
-       "Register"])]])
+        "Logout"]])]])
+    ; ;; LOGIN
+    ; (when-not @current-user
+    ;   [nav-item {:on-click #(do (rf/dispatch-sync [:assoc-in [:auth/form] nil])
+    ;                             (rf/dispatch [:modal login-modal]))}
+    ;    "Login"])
+    ; ;; REGISTER
+    ; (when-not @current-user
+    ;   [nav-item {:on-click #(do (rf/dispatch-sync [:assoc-in [:auth/form] nil])
+    ;                             (rf/dispatch [:modal register-modal]))}
+    ;    "Register"])]])
 
 (defn navbar []
   (r/with-let [current-user (rf/subscribe [:identity])]
@@ -118,7 +117,7 @@
      " by "
      [:a
       {:target "_blank", :href "https://github.com/efraimmgon/elogger"}
-      "Laconic CMS"]
+      "elogger"]
      " for a better web."]]])
 
 ;;; Core
@@ -138,3 +137,21 @@
    [navbar]
    body
    [footer]])
+
+
+(defn login-base-ui* [& forms]
+  [with-deps
+   {:deps (<sub [:main/deps])
+    :loading [:div.loading "loading ..."]
+    :loaded (into
+             [:div.wrapper.login-page
+              [modal-ui]
+              [error-modal-ui]]
+             forms)}])
+
+(defn login-base-ui [body]
+  [login-base-ui*
+   [navbar]
+   body
+   [footer]])
+  

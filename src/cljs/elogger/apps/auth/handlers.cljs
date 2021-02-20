@@ -38,20 +38,89 @@
        (b64/encodeString)
        (str "Basic ")))
 
+
 ;;; ---------------------------------------------------------------------------
 ;;; Main
+
+(defn loading-msg [msg]
+  (rf/dispatch [:assoc-in [:auth.check.notify/loading] msg]))
+
+(defn geo-loc-fail []
+  (rf/dispatch [:assoc-in [:auth.checkin/geolocation-off?] true]))
+
+(defn clear-geo-loc-msg []
+  (rf/dispatch [:assoc-in [:auth.checkin/geolocation-off?] nil]))
+
+(defn get-current-location [geolocation success fail]
+  (loading-msg "Carreando, aguarde...")
+  (.getCurrentPosition geolocation success fail))
+
+(defn gcl-success [{:keys [location-timeout url handler current-user]}]
+  (fn [position]
+    (js/clearTimeout location-timeout)
+    (ajax/POST url
+               {:params {:office-hours/user-id (:users/id @current-user)
+                         :office-hours/lat (-> position .-coords .-latitude)
+                         :office-hours/lng (-> position .-coords .-longitude)}
+                :handler handler
+                :error-handler #(dispatch [:set-error (str (:response %))])
+                :finally #(loading-msg nil)
+                :response-format :json
+                :keywords? true})))
+
+(defn gcl-fail [location-timeout]
+  (fn [error]
+    (js/clearTimeout location-timeout)
+    (geo-loc-fail)))
+
+(reg-event-fx
+  :auth/checkin!
+  base-interceptors
+  (fn [{:keys [db]} [current-user]]
+    (clear-geo-loc-msg)
+    (if-let [geolocation (.-geolocation js/navigator)]
+      (let [location-timeout (js/setTimeout geo-loc-fail 10000)]
+        (get-current-location 
+          geolocation 
+          (gcl-success 
+            {:location-timeout location-timeout 
+             :current-user current-user
+             :url "/api/checkin" 
+             :handler #(dispatch [:assoc-in [:identity :users/is-checkedin] true])})
+          (gcl-fail location-timeout)))
+      (do (loading-msg nil)
+          (geo-loc-fail)))
+    nil))
+
+(reg-event-fx
+  :auth/checkout!
+  base-interceptors
+  (fn [_ [current-user]]
+    (clear-geo-loc-msg)
+    (if-let [geolocation (.-geolocation js/navigator)]
+      (let [location-timeout (js/setTimeout geo-loc-fail 10000)]
+        (get-current-location 
+          geolocation 
+          (gcl-success 
+            {:location-timeout location-timeout 
+             :current-user current-user
+             :url "/api/checkout" 
+             :handler #(dispatch [:assoc-in [:identity :users/is-checkedin] false])})
+          (gcl-fail location-timeout)))
+      (geo-loc-fail))
+    nil))
 
 (reg-event-fx
   :auth/login
   base-interceptors
-  (fn [{:keys [db]} [params]]
-    (ajax/POST
-      "/api/login"
+  (fn [{:keys [db]} [{:keys [params path]}]]
+    (ajax/POST "/api/login"
      {:headers {"Authorization"
                 (encode-auth (string/trim (:users/username @params))
                              (:users/password @params))}
-      :handler #(do (dispatch-n [:set-identity %] [:remove-modal])
-                    (js/setTimeout session-timer timeout-ms))
+      :handler (fn [user]
+                 (dispatch-n [:set-identity user] [:assoc-in path nil])
+                 (js/setTimeout session-timer timeout-ms))
       :error-handler #(dispatch [:set-error %])
       :response-format :json
       :keywords? true})

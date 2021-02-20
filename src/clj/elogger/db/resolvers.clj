@@ -42,7 +42,19 @@
   (db/execute!
     ["SELECT * FROM profile p"]))
 
-;;; RESOLVERS
+(defn get-office-hours []
+  (db/execute!
+    ["SELECT * FROM office_hours"]))
+
+(defn get-office-hours-by-id [id]
+  (db/execute!
+    ["SELECT * FROM office_hours oh WHERE oh.id = ?" id]))
+
+(defn get-office-hours-by-user-id [id]
+  (db/execute-one!
+    ["SELECT * FROM office_hours oh WHERE oh.user_id = ?" id]))
+
+;;; RESOLVERS -------
 
 (defresolver users [env input]
   {::pc/output [{:users/list common/user-columns}]}
@@ -60,6 +72,8 @@
   {::pc/input #{:users/username}
    ::pc/output common/user-columns}
   (get-user-by-username (:users/username input)))
+
+;;; Profile
 
 (defresolver user->profile [env {:keys [users/id]}]
   {::pc/input #{:users/id}
@@ -86,6 +100,37 @@
     seq
     (hash-map :profiles/list)))
 
+;;; Office Hours
+
+(defresolver user->office-hours [env {:keys [users/id]}]
+  {::pc/input #{:users/id}
+   ::pc/output [{:users/office-hours [:office-hour/id]}]}
+  (let [ret (-> (get-office-hours-by-user-id id)
+                (select-keys [:office-hours/id]))]
+    (when (seq ret)
+      {:users/office-hours ret})))
+
+(defresolver office-hours-by-id [env {:keys [office-hours/id]}]
+  {::pc/input #{:office-hours/id}
+   ::pc/output common/office-hours-columns}
+  (let [ret (get-office-hours-by-id id)]
+    (when (seq ret)
+      ret)))
+
+(defresolver office-hours-by-user-id [env {:keys [users/id]}]
+  {::pc/input #{:users/id}
+   ::pc/output common/office-hours-columns}
+  (let [ret (get-office-hours-by-user-id id)]
+    (when (seq ret)
+      ret)))
+
+(defresolver office-hours [env input]
+  {::pc/output [{:office-hours/list common/office-hours-columns}]}
+  (some->>
+    (get-office-hours)
+    seq
+    (hash-map :office-hours/list)))
+
 (def user-registry
   [users
    user-by-id 
@@ -93,7 +138,11 @@
    user->profile
    profile-by-id
    profile-by-user-id 
-   profiles])
+   profiles
+   user->office-hours
+   office-hours-by-id
+   office-hours-by-user-id
+   office-hours])
 
 ;;; ---------------------------------------------------------------------------
 ;;; PAGE

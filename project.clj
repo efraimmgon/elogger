@@ -33,7 +33,7 @@
                  [mount "0.1.16"]
                  [nrepl "0.7.0"]
                  [org.clojure/clojure "1.10.1"]
-                 [org.clojure/clojurescript "1.10.597" :scope "provided"]
+                 [org.clojure/clojurescript "1.10.764" :scope "provided"]
                  [org.clojure/tools.cli "1.0.194"]
                  [org.clojure/tools.logging "1.0.0"]
                  [org.postgresql/postgresql "42.2.11"]
@@ -97,7 +97,7 @@
                   :dependencies [[binaryage/devtools "1.0.0"]
                                  [cider/piggieback "0.4.2"]
                                  [doo "0.1.11"]
-                                 [figwheel-sidecar "0.5.19"]
+                                 [figwheel-sidecar "0.5.20"]
                                  [faker "0.2.2"]
                                  [pjstadig/humane-test-output "0.10.0"]
                                  [prone "2020-01-17"]
@@ -107,7 +107,7 @@
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
                                  [jonase/eastwood "0.3.5"]
                                  [lein-doo "0.1.11"]
-                                 [lein-figwheel "0.5.19"]] 
+                                 [lein-figwheel "0.5.20"]] 
                   :cljsbuild{:builds
                    {:app
                     {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]

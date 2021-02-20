@@ -7,7 +7,8 @@
     [ring.util.http-response :refer [content-type ok]]
     [ring.util.anti-forgery :refer [anti-forgery-field]]
     [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-    [ring.util.response]))
+    [ring.util.response]
+    [elogger.config :as config]))
 
 (parser/set-resource-path!  (clojure.java.io/resource "html"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
@@ -22,7 +23,8 @@
         template
         (assoc params
           :page template
-          :csrf-token *anti-forgery-token*)))
+          :csrf-token *anti-forgery-token*
+          :google-api-key (config/env :google-api-key))))
     "text/html; charset=utf-8"))
 
 (defn error-page

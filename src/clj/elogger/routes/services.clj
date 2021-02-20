@@ -87,6 +87,40 @@
     {:get {:summary "Is the user logged in?"
            :handler (fn [req]
                       (ok {:user (:identity req)}))}}]
+   
+   ["/checkin"
+    {:post {:summary "Checks the user into his office hours."
+            :parameters {:body (s/keys :req [:office-hours/user-id
+                                             :office-hours/lat
+                                             :office-hours/lng])}
+            :responses {200 {:body :result/Result}}
+            :handler (fn [{:keys [parameters] :as req}]
+                       (if (user/any-granted? 
+                             (:identity req)
+                             (get-in parameters [:body :office-hours/user-id]))
+                         (auth/checkin!
+                           (assoc (:body parameters) :office-hours/user-agent
+                             (get-in req [:headers "user-agent"])))
+                         (forbidden
+                           {:error-msg "Action not permitted for this user."})))}}]
+   ["/checkout"
+    {:post {:summary "Checks the user out of his office hours."
+            :parameters {:body (s/keys :req [:office-hours/user-id
+                                             :office-hours/lat
+                                             :office-hours/lng])}
+            :responses {200 {:body :result/Result}}
+            :handler (fn [{:keys [parameters] :as req}]
+                       (if (user/any-granted? 
+                             (:identity req)
+                             (get-in parameters [:body :office-hours/user-id]))
+                         (auth/checkout!
+                           (assoc (:body parameters) :office-hours/user-agent
+                             (get-in req [:headers "user-agent"])))
+                         (forbidden
+                           {:error-msg "Action not permitted for this user."})))}}]
+   
+                         
+                            
 
    ;;; -----------------------------------------------------------------------
    ;;; Users

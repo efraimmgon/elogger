@@ -14,6 +14,7 @@
    :users/admin, 
    :users/last-login, 
    :users/is-active,
+   :users/is-checkedin,
    :users/created-at, 
    :users/updated-at, 
    :users/password])
@@ -27,6 +28,16 @@
    :profile/profile-picture-id
    :profile/created-at, 
    :profile/updated-at])
+
+(def office-hours-columns
+  [:office-hours/id
+   :office-hours/user-id
+   :office-hours/status
+   :office-hours/user-agent
+   :office-hours/lat
+   :office-hours/lng
+   :office-hours/created-at
+   :office-hours/updated-at])
 
 (def page-columns
   [:page/id, 

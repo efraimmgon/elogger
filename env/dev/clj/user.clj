@@ -63,11 +63,6 @@
 
 
 (comment
-  
+  (clojure.tools.namespace.repl/refresh)
   (reset-db)
-  (create-migration "add-profile-table")
-                      
-                      
-  (in-ns 'elogger.utils.deps)
-  (load-file "src/cljs/laconic_cms/utils/deps.cljs")
-  (sel1 (keyword "#sweetalert2.js")))
+  (create-migration "add-office-hours-table"))

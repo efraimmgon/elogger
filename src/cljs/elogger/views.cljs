@@ -1,6 +1,7 @@
 (ns elogger.views
   (:require
     [elogger.apps.admin.views :as admin]
+    [elogger.apps.auth.views :as auth]
     [elogger.apps.home :as home]
     [elogger.apps.blog.views :as blog]
     [elogger.apps.pages.views :as pages]
@@ -25,7 +26,7 @@
      ;;; HOME
      ["/"
       {:name :home
-       :view #'home/home-ui}]
+       :view #'auth/home-ui}]
      
      ;;; ADMIN
      ["/admin"

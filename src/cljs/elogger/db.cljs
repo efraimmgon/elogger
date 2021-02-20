@@ -3,7 +3,7 @@
 
 (def main-deps
   #{"material-kit-css"
-    "demo-css"
+    "login-demo-css"
     ; "bootstrap-material-design.min.js" ; common
     ; "moment.min.js" ; common
     ; "bootstrap-datetimepicker.js" ; common
@@ -30,7 +30,13 @@
     "chartist-js"
     ; "bootstrap-notify.js" ; fuck this shit
     "material-dashboard-js"})
+
+(def login-deps
+  #{"material-kit-css"
+    "login-demo-css"
+    "material-kit-js"})
     
 (def default-db
   {:main/deps main-deps
-   :admin/deps admin-deps})
+   :admin/deps admin-deps
+   :login/deps login-deps})

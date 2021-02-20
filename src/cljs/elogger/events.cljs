@@ -82,7 +82,7 @@
 (def main-deps
   [{:dep/id "material-kit-css"
     :dep/href "/css/material-kit.css"}
-   {:dep/id "demo-css"
+   {:dep/id "login-demo-css"
     :dep/href "/css/demo.css"}
    {:dep/id "material-kit-js"
     :dep/src "/js/material-kit.js"}])
@@ -101,11 +101,19 @@
    {:dep/id "material-dashboard-js"
     :dep/src "/js/material-dashboard.js"}])
 
+(def login-deps
+  [{:dep/id "material-kit-css"
+    :dep/href "/css/material-kit.css"}
+   {:dep/id "login-demo-css"
+    :dep/href "/css/login-demo.css"}
+   {:dep/id "material-kit-js"
+    :dep/src "/js/material-kit.js"}])
+
 (rf/reg-event-fx
   :add-deps!
   base-interceptors
   (fn [_ _]
-    (deps/add-deps! (into main-deps admin-deps))
+    (deps/add-deps! (into (into main-deps admin-deps) login-deps))
     nil))
 
 
@@ -120,8 +128,8 @@
   (fn [{:keys [db]} _]
     {:dispatch-n [[:add-deps!]
                   ;; TODO: remove before deploy
-                  [:auth/login (atom {:users/username "admin"
-                                      :users/password "admin"})]]
+                  [:auth/login {:params (atom {:users/username "admin"
+                                               :users/password "admin"})}]]
      :db (merge db default-db)}))
 
 (rf/reg-event-db

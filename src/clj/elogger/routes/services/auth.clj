@@ -79,6 +79,24 @@
       response/ok
       (assoc :session nil)))
 
+(defn checkin!
+  "Checks the user into his office hours."
+  [params]
+  (let [user (db/get-user (:office-hours/user-id params))]
+    (if (:users/is-checkedin user)
+      (response/precondition-failed {:result :precondition-failed
+                                     :message "O turno já foi iniciado!"})
+      (response/ok (db/checkin! params)))))
+
+(defn checkout!
+  "Checks the user out of his office hours."
+  [params]
+  (let [user (db/get-user (:office-hours/user-id params))]
+    (if (:users/is-checkedin user)
+      (response/ok (db/checkout! params))
+      (response/precondition-failed 
+        {:result :precondition-failed
+         :message "Você ainda não iniciou sua jornada!"}))))
 
 (comment
   (register! {:session nil}
