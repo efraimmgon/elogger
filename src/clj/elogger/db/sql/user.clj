@@ -93,6 +93,17 @@
 (defn create-office-hours! [params]
   (db/insert! "office_hours" params))
 
+(defn get-users-office-hours-last-checkin
+  ""
+  []
+  (some->
+    {[:users/all]
+     [{:users/list (conj common/user-query 
+                         {:users/last-checkin common/office-hours-columns})}]}
+    parser
+    :users/list
+    seq))
+
 (defn checkin! 
   "Takes a user-id, lat, lng, and the user-agent, checking the user into his
   office hours."
@@ -114,7 +125,9 @@
                      :users/id (:office-hours/user-id params)})
       (create-office-hours! (assoc params :office-hours/status "checkout"))
       {:result :ok})))
-  
+
+
+
 (comment
   (->> (get-users)
        (every? :users/profile))

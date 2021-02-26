@@ -22,6 +22,12 @@
   []
   (db/execute!
     ["SELECT * FROM users u"]))
+
+(defn get-users-id 
+  "Retrieves the id of all the users."
+  []
+  (db/execute!
+    ["SELECT u.id FROM users u"]))
     
     
 (defn get-user-by-username
@@ -53,6 +59,13 @@
 (defn get-office-hours-by-user-id [id]
   (db/execute-one!
     ["SELECT * FROM office_hours oh WHERE oh.user_id = ?" id]))
+
+(defn get-user-office-hours-last-checkin [id]
+  (db/execute-one!
+    ["SELECT * FROM office_hours oh 
+     WHERE oh.user_id = ? AND oh.status = 'checkin'
+     ORDER BY oh.created_at DESC
+     LIMIT 1" id]))
 
 ;;; RESOLVERS -------
 
@@ -102,14 +115,6 @@
 
 ;;; Office Hours
 
-(defresolver user->office-hours [env {:keys [users/id]}]
-  {::pc/input #{:users/id}
-   ::pc/output [{:users/office-hours [:office-hour/id]}]}
-  (let [ret (-> (get-office-hours-by-user-id id)
-                (select-keys [:office-hours/id]))]
-    (when (seq ret)
-      {:users/office-hours ret})))
-
 (defresolver office-hours-by-id [env {:keys [office-hours/id]}]
   {::pc/input #{:office-hours/id}
    ::pc/output common/office-hours-columns}
@@ -124,12 +129,37 @@
     (when (seq ret)
       ret)))
 
+(defresolver user->office-hours-last-checkin [env {:keys [users/id]}]
+  {::pc/input #{:users/id}
+   ::pc/output [{:users/last-checkin common/office-hours-columns}]}
+  (let [ret (get-user-office-hours-last-checkin id)]
+    (when (seq ret)
+      {:users/last-checkin ret})))
+
 (defresolver office-hours [env input]
   {::pc/output [{:office-hours/list common/office-hours-columns}]}
   (some->>
     (get-office-hours)
     seq
     (hash-map :office-hours/list)))
+
+(defresolver user->office-hours [env {:keys [users/id]}]
+  {::pc/input #{:users/id}
+   ::pc/output [{:users/office-hours [:office-hour/id]}]}
+  (let [ret (-> (get-office-hours-by-user-id id)
+                (select-keys [:office-hours/id]))]
+    (when (seq ret)
+      {:users/office-hours ret})))
+
+(defresolver office-hours->user [env {:keys [office-hours/id]}]
+  {::pc/input #{:office-hours/id}
+   ::pc/output [{:office-hours/user [:users/id]}]}
+  (some->>
+    (get-office-hours-by-id id)
+    :office-hours/user-id
+    (hash-map :users/id)
+    (hash-map :office-hours/user)))
+
 
 (def user-registry
   [users
@@ -142,7 +172,9 @@
    user->office-hours
    office-hours-by-id
    office-hours-by-user-id
-   office-hours])
+   office-hours
+   office-hours->user
+   user->office-hours-last-checkin])
 
 ;;; ---------------------------------------------------------------------------
 ;;; PAGE

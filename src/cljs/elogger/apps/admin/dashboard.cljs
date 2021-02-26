@@ -1,4 +1,6 @@
-(ns elogger.apps.admin.dashboard)
+(ns elogger.apps.admin.dashboard
+  (:require
+    [elogger.utils.components :as c]))
 
 
 
@@ -330,15 +332,18 @@
 (defn dashboard-ui []
   [:div
    [:div.row
-    [get-more-space-card]
-    [last-24h-revenue-card]
-    [fixed-issues-card]
-    [followers-card]]
-   (comment) ; No charts for now
-   [:div.row
-    [daily-sales]
-    [email-subscriptions]
-    [completed-tasks]]
-   [:div.row
-    [tasks]
-    [employees-stats]]])
+    [:div.col-md-12
+     [c/card
+      {:header [:h4 "Painel"]}]]]])
+
+   ;  [get-more-space-card]
+   ;  [last-24h-revenue-card]
+   ;  [fixed-issues-card]
+   ;  [followers-card]]
+   ; [:div.row
+   ;  [daily-sales]
+   ;  [email-subscriptions]
+   ;  [completed-tasks]]
+   ; [:div.row
+   ;  [tasks]
+   ;  [employees-stats]]])

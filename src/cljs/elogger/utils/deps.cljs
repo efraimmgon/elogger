@@ -173,8 +173,6 @@
             :loaded component}"
   [{:keys [deps loading loaded]}]
   (when (seq deps)
-    (prn 'difference)
-    (prn (difference (:deps/loaded @config) deps))
     ;; Unload deps from the page that won't be required.
     (unload-deps! (difference (:deps/loaded @config) deps))
     (swap! config update :deps/loaded intersection deps))

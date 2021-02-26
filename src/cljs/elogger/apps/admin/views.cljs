@@ -6,6 +6,7 @@
     [elogger.apps.admin.comments :as comments]
     [elogger.apps.admin.pages :as pages]
     [elogger.apps.admin.users :as users]
+    [elogger.apps.admin.office-hours :as office-hours]
     [elogger.utils.deps :refer [with-deps]]
     [elogger.utils.events :refer [<sub]]
     [elogger.utils.views :refer [modal-ui error-modal-ui]]
@@ -32,21 +33,24 @@
    ;     Tip 2: you can also add an image using data-image tag -->"
    [:div.logo
     [:a.simple-text.logo-normal
-     {:href "/"}
-     "Laconic CMS"]]
+     {:href "#/"}
+     "Elogger"]]
    [:div.sidebar-wrapper
     [:ul.nav
      [sidebar-item-ui
-      (rfe/href :admin) [:i.material-icons "dashboard"] "Dashboard"]
-     ; TODO
+      (rfe/href :admin) [:i.material-icons "dashboard"] "Painel"]
+     ; [sidebar-item-ui
+     ;  (rfe/href :admin.pages/list) [:i.material-icons "library_books"] "Pages"]
+     ; [sidebar-item-ui
+     ;  (rfe/href :admin.posts/list) [:i.material-icons "assignment"] "Blog Posts"]
      [sidebar-item-ui
-      (rfe/href :admin.pages/list) [:i.material-icons "library_books"] "Pages"]
+      (rfe/href :admin.users/list) [:i.material-icons "person"] "Usuários"]
      [sidebar-item-ui
-      (rfe/href :admin.posts/list) [:i.material-icons "assignment"] "Blog Posts"]
-     [sidebar-item-ui
-      (rfe/href :admin.users/list) [:i.material-icons "person"] "Users"]
-     [sidebar-item-ui
-      (rfe/href :admin.comments/list) [:i.material-icons "comment"] "Comments"]]]])
+      (rfe/href :admin.office-hours/list) 
+      [:i.material-icons "switch_account"] 
+      "Jornada de trabalho"]]]])
+     ; [sidebar-item-ui
+     ;  (rfe/href :admin.comments/list) [:i.material-icons "comment"] "Comments"]]]])
 
 
 ;;; ---------------------------------------------------------------------------
@@ -122,13 +126,13 @@
        [:span.sr-only "Toggle navigation"]
        [:span.navbar-toggler-icon.icon-bar]
        [:span.navbar-toggler-icon.icon-bar]
-       [:span.navbar-toggler-icon.icon-bar]]
-      [:div.collapse.navbar-collapse.justify-content-end
-       [navbar-search-ui]
-       [:ul.navbar-nav
-        [navbar-stats-ui]
-        [navbar-notifications-ui]
-        [navbar-account-ui current-user]]]]]))
+       [:span.navbar-toggler-icon.icon-bar]]]]))
+      ; [:div.collapse.navbar-collapse.justify-content-end
+      ;  [navbar-search-ui]
+      ;  [:ul.navbar-nav
+      ;   [navbar-stats-ui]
+      ;   [navbar-notifications-ui]
+      ;   [navbar-account-ui current-user]]]]]))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Footer
@@ -139,25 +143,25 @@
      [:nav.float-left
       [:ul
        [:li>a
-         {:href "/"}
-         "Laconic CMS"]
-       [:li>a
-         {:href "/about"}
-         "About Us"]
-       [:li>a
-         {:href "http://blog.creative-tim.com"}
-         "Blog"]
-       [:li>a
-         {:href "https://www.creative-tim.com/license"}
-         "Licenses"]]]
+         {:href "#/"}
+         "Elogger"]]]
+       ; [:li>a
+       ;   {:href "/about"}
+       ;   "About Us"]
+       ; [:li>a
+       ;   {:href "http://blog.creative-tim.com"}
+       ;   "Blog"]
+       ; [:li>a
+       ;   {:href "https://www.creative-tim.com/license"}
+       ;   "Licenses"]]]
      [:div.copyright.float-right
       "© " (.getFullYear (js/Date.))
       ", made with "
       [:i.material-icons "favorite"]
       " by "
       [:a
-       {:target "_blank", :href "https://www.creative-tim.com"}
-       "Creative Tim"]
+       {:target "_blank", :href "https://github.com/efraimmgon/elogger"}
+       "Elogger"]
       " for a better web."]]])
 
 
@@ -186,8 +190,12 @@
        panel-ui]]
      [footer-ui]]]])
 
+;;; Dashboard
+
 (defn dashboard-ui []
   [admin-page-ui "Dashboard" [dashboard/dashboard-ui]])
+
+;;; Pages
 
 (defn pages-ui []
   [admin-page-ui "Pages" [pages/pages-panel-ui]])
@@ -198,6 +206,8 @@
 (defn edit-page-ui []
   [admin-page-ui "Edit page" [pages/edit-page-panel-ui]])
 
+;;; Users
+
 (defn users-ui []
   [admin-page-ui "Users" [users/users-panel-ui]])
 
@@ -207,6 +217,17 @@
 (defn edit-user-ui []
   [admin-page-ui "Edit user" [users/edit-user-panel-ui]])
 
+;;; Office hours
+
+(defn office-hours-ui []
+  [admin-page-ui "Jornada de trabalho" [office-hours/office-hours-panel-ui]])
+
+(defn view-user-office-hours-ui []
+  [admin-page-ui "Jornadas de trabalho" 
+   [office-hours/view-user-office-hours-panel-ui]])
+
+;;; Posts
+
 (defn posts-ui []
   [admin-page-ui "Blog posts" [blog/posts-panel-ui]])
 
@@ -215,6 +236,8 @@
 
 (defn edit-post-ui []
   [admin-page-ui "Edit post" [blog/edit-post-panel-ui]])
+
+;;; Comments
 
 (defn comments-ui []
   [admin-page-ui "Comments" [comments/comments-ui]])

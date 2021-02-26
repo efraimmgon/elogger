@@ -65,6 +65,18 @@
    nil))
 
 (reg-event-fx
+  :users.office-hours/last-checkin
+  base-interceptors
+  (fn [_ _]
+    (ajax/GET "/api/users/office-hours/last-checkin"
+              {:handler #(dispatch [:users.office-hours.last-checkin/set %])
+               :error-handler #(dispatch [:ajax-error %])
+               :response-format :json
+               :keywords? true})
+    nil))
+
+
+(reg-event-fx
  :users/load-profile-user
  base-interceptors
  (fn [_ [user-id]]
@@ -98,9 +110,16 @@
  (fn [db [users]]
    (assoc-in db [:users/list] users)))
 
+(reg-event-db
+  :users.office-hours.last-checkin/set
+  base-interceptors
+  (fn [db [users]]
+    (assoc db :users.office-hours/last-checkin users)))
+
 ;;; ---------------------------------------------------------------------------
 ;;; Subscriptions
 
 (reg-sub :users/list query)
 (reg-sub :users/user query)
 (reg-sub :users/profile query)
+(reg-sub :users.office-hours/last-checkin query)

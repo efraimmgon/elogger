@@ -87,10 +87,13 @@
   (conj user-columns
         {:users/profile profile-columns}))
 
+(def office-hours-query
+  (conj office-hours-columns
+        {:office-hours/user user-query}))
+
 (def like-query
   (conj like-columns
         {:likes/author user-query}))
-
 
 (defn author-query [k]
   {k user-query})

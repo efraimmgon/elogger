@@ -18,18 +18,18 @@
     (fn []
       [:div
        [form-group
-        "Username *"
+        "Nome de usuário *"
         [input {:type :text,
                 :name (conj path :users/username)
                 :class "form-control"
                 :disabled (boolean (:users/id @user))}]]
        [form-group
-        "First name"
+        "Primeiro nome"
         [input {:type :text
                 :name (conj path :users/profile :profile/first-name)
                 :class "form-control"}]]
        [form-group
-        "Last name"
+        "Sobrenome"
         [input {:type :text
                 :name (conj path :users/profile :profile/last-name)
                 :class "form-control"}]]
@@ -43,11 +43,11 @@
                       :disabled true}
                      {:type :password})]
          [form-group
-          "Password *"
+          "Senha *"
           [input (merge attrs {:name (conj path :users/password)
                                :class "form-control"})]])
        [form-group
-        "Admin?"
+        "Administrador?"
         [radio-input
          {:name (conj path :users/admin)
           :value true
@@ -58,7 +58,7 @@
           :value false
           :default-checked true}]]
        [form-group
-        "Active?"
+        "Ativo?"
         [radio-input
          {:name (conj path :users/is-active)
           :value true
@@ -77,17 +77,17 @@
                    {:doc @user
                     :handler (fn [resp]
                                (rf/dispatch [:navigate! :admin.users/list]))}])}
-    "Save user"]])
+    "Salvar usuário"]])
 
 (defn create-user-panel-ui []
   (r/with-let [user (rf/subscribe [:users/user])]
     [:div.row>div.col-md-12
-     [card
+     [c/card
       {:title
        [:div
-        "New user"
+        "Novo usuário"
         [create-user-button user]]
-       :content
+       :body
        [:div
         [user-form-template user]
         [create-user-button user]]}]]))
@@ -100,17 +100,17 @@
                    {:doc @user
                     :handler (fn [resp]
                                (rf/dispatch [:navigate! :admin.users/list]))}])}
-    "Update user"]])
+    "Atualizar usuário"]])
 
 (defn edit-user-panel-ui []
   (r/with-let [user (rf/subscribe [:users/user])]
     [:div.row>div.col-md-12
-     [card
+     [c/card
       {:title
        [:div
-        "Edit user"
+        "Editar usuário"
         [update-user-button user]]
-       :content
+       :body
        [:div
         [user-form-template user]
         [update-user-button user]]}]]))
@@ -119,42 +119,49 @@
   [:a.btn.btn-primary
    {:href (rfe/href :admin.user/create)}
    [:i.material-icons "add"]
-   " Create user"])
+   " Criar usuário"])
 
 (defn users-panel-ui []
   (r/with-let [users (rf/subscribe [:users/list])]
    [:div.row>div.col-md-12
-    [card
-     {:title
-      [:div
-       "Users"
+    [c/card
+     {:header
+      [:h4
+       "Usuários"
        [:div.pull-right
         [new-user-button]]]
-      :content
+      :body
       (if-not (seq @users)
-        "No users yet."
+        "Sem usuários ainda."
         [:div
          [:div.clearfix]
          [:div.table-responsive.table-full-width
-          [tabulate
-           [:users/id :users/username :users/email :users/last-login :users/edit :users/delete]
-           (doall
-             (for [user @users]
-               (assoc user
-                      :users/last-login
-                      (or (:users/last-login user) "-")
-
-                      :users/edit
-                      [:a.btn.btn-warning
-                       {:href (rfe/href :admin.user/edit {:users/id (:users/id user)})}
-                       [:i.material-icons "edit"]]
-
-                      :users/delete
-                      [:button.btn.btn-danger
-                       {:on-click #(rf/dispatch 
-                                     [:users/delete-user 
-                                      {:users/id (:users/id user)
-                                       :handler (fn [resp]
-                                                  (rf/dispatch [:users/load-users]))}])}
-                       [:i.material-icons "delete"]])))
-           {:class "table table-hover table-striped"}]]])}]]))
+          [:table.table.table-hover.table-striped.text-center
+           [c/thead ["Id" "Nome de usuário" "Email" "Último login" "Editar" "Deletar"]]
+           [:tbody
+            (doall
+              (for [user @users]
+                ^{:key (:users/id user)}
+                [:tr
+                 ;; Id
+                 [:td (:users/id user)]
+                 ;; Username
+                 [:td (:users/username user)]
+                 ;; Email
+                 [:td (:users/email user)]
+                 ;; Last login
+                 [:td (:users/last-login user)]
+                 ;; Edit
+                 [:td
+                  [:a.btn.btn-warning
+                   {:href (rfe/href :admin.user/edit (select-keys user [:users/id]))}
+                   [:i.material-icons "edit"]]]
+                 ;; Delete
+                 [:td
+                  [:button.btn.btn-danger
+                   {:on-click #(rf/dispatch 
+                                 [:users/delete-user 
+                                  {:users/id (:users/id user)
+                                   :handler (fn [resp]
+                                              (rf/dispatch [:users/load-users]))}])}
+                   [:i.material-icons "delete"]]]]))]]]])}]]))

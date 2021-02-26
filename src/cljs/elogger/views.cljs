@@ -33,6 +33,7 @@
       [""
        {:name :admin
         :view #'admin/dashboard-ui}]
+      ;;; ADMIN USERS
       ["/users"
        [""
         {:name :admin.users/list
@@ -55,7 +56,18 @@
                                     [:users/load-user
                                      (js/parseInt
                                        (get-in path [:path :users/id]))]))}]}]]]
-      
+      ;;; ADMIN OFFICE-HOURS
+      ["/office-hours"
+       [""
+        {:name :admin.office-hours/list
+         :view #'admin/office-hours-ui
+         :controllers [{:start #(rf/dispatch [:users.office-hours/last-checkin])}]}]
+       ["/user/{users/id}"
+        {:parameters {:path {:users/id int?}}
+         :name :admin.office-hours.user/list
+         :view #'admin/view-user-office-hours-ui
+         :controllers [{:start #(rf/dispatch [:users.office-hours/list])}]}]]
+      ;;; ADMIN POSTS
       ["/posts"
        [""
         {:name :admin.posts/list
@@ -71,14 +83,14 @@
         {:parameters {:path {:blog-post/id int?}}}
         ["/edit"
          {:name :admin.post/edit
-          :view #' admin/edit-post-ui
+          :view #'admin/edit-post-ui
           :controllers [{:parameters {:path [:blog-post/id]}
                          :start (fn [path]
                                   (rf/dispatch
                                     [:blog.post/load
                                      (js/parseInt
                                        (get-in path [:path :blog-post/id]))]))}]}]]]
-      
+      ;;; ADMIN PAGES
       ["/pages"
        [""
         {:name :admin.pages/list
@@ -101,6 +113,7 @@
                                     [:pages/load-page
                                      (js/parseInt
                                        (get-in path [:path :page/id]))]))}]}]]]
+      ;;; ADMIN COMMENTS
       ["/comments"
        [""
         {:name :admin.comments/list
@@ -118,7 +131,7 @@
                                      (js/parseInt
                                        (get-in path [:path :threaded-comment/id]))]))}]}]]]]
      
-     ;;; BLOG
+     ;;; BLOG /blog
      ["/blog"
       [""
        {:name :blog/list
@@ -138,7 +151,7 @@
                                     (js/parseInt 
                                       (get-in params [:path :blog-post/id]))]))}]}]]]
 
-     ;;; USERS
+     ;;; USERS /users
      ["/users"
       ["/{users/id}"
        {:parameters {:path {:users/id int?}}}
@@ -159,7 +172,7 @@
                                    [:users/load-profile-user
                                     (js/parseInt (get-in params [:path :users/id]))]))}]}]]]
 
-     ;;; PAGES
+     ;;; PAGES /p/
      ["/p/{page/id}"
       {:name :page/view
        :parameters {:path {:page/id int?}}

@@ -146,6 +146,15 @@
              :handler (fn [{:keys [parameters]}]
                         (user/create-user-with-profile!
                           (:body parameters)))}}]
+    ["/office-hours/last-checkin"
+     {:get {:summary "Return all the users last office hours checkin row, 
+                     along with the users info."
+            :responses {200 {:body :users/users}}
+            :handler (fn [req]
+                       (if (admin? req)
+                         (user/get-users-office-hours-last-checkin)
+                         (forbidden
+                           {:error-msg "Action not permited for this user."})))}}]
     ["/{users/id}"
      {:parameters {:path (s/keys :req [:users/id])}
       :get {:summary "Return a user record by id."
@@ -179,7 +188,7 @@
                                 (user/delete-user! user-id)
                                 (forbidden
                                   {:error-msg "Action not permited for this user."}))))}}]]
-
+      
    ;; -----------------------------------------------------------------------
    ;; BLOG POSTS
 

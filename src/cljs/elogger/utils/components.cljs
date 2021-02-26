@@ -78,15 +78,18 @@
 ; MISC
 ; ------------------------------------------------------------------------------
 
-(defn card [{:keys [title subtitle content footer attrs]}]
-  [:div.card
-   attrs
-   [:div.content
-    (when title [:h4.title title])
-    (when subtitle [:p.category subtitle])
-    content
-    (when footer [:div.footer footer])]])
 
+(defn card [{:keys [attrs header title subtitle body content footer]}]
+  [:div.card
+   (if header 
+     (update attrs :class str " card-nav-tabs")
+     attrs)
+   (when header [:div.card-header.card-header-primary header])
+   [:div.card-body
+    (when title [:h4.card-title title])
+    (when subtitle [:h6.card-subtitle.text-muted subtitle])
+    (when body [:div.card-text body])
+    (when footer footer)]])   
 
 (defn breadcrumbs [& items]
   (into
@@ -97,12 +100,15 @@
        [:li.active title]
        [:li [:a {:href href} title]]))))
 
-(defn thead [headers]
-  [:thead
-   [:tr
-    (for [th headers]
-      ^{:key th}
-      [:th th])]])
+(defn thead 
+  ([headers] (thead nil headers))
+  ([attrs headers]
+   [:thead
+    attrs
+    [:tr
+     (for [th headers]
+       ^{:key th}
+       [:th th])]]))
 
 (defn tbody [rows]
   (into

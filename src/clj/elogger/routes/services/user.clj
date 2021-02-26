@@ -53,6 +53,8 @@
                      :office-hours/lat
                      :office-hours/lng]))
 
+(s/def :users/last-checkin :office-hours/OfficeHours)
+
 (s/def :office-hours/office-hours
        (s/* :office-hours/OfficeHours))
 
@@ -84,9 +86,11 @@
                       :users/password
                       :users/admin
                       :users/is-active
+                      :users/is-checkedin
                       :users/created-at
                       :users/updated-at
-                      :users/profile]))
+                      :users/profile]
+               :opt [:users/last-checkin]))
 
 (s/def :users/users (s/* :users/User))
 
@@ -129,6 +133,12 @@
   [id]
   (response/ok
     (db/get-user-by-id id)))
+
+(defn get-users-office-hours-last-checkin
+  "Return all users info with their last office hours checkin row."
+  []
+  (response/ok
+    (db/get-users-office-hours-last-checkin)))
 
 (defn update-user!
   "Update a user record by id."
