@@ -147,9 +147,9 @@
   (r/with-let [all-comments (rf/subscribe [:comments/list])]
     [:div.row>div.col-md-12
      [card
-      {:title
-       [:div "Comments"]
-       :content
+      {:header
+       [:h4 "Comments"]
+       :body
        [:div
         (if-not (seq @all-comments)
            [:p "No comments yet."]

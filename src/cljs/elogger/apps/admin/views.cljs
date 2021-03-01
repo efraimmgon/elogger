@@ -48,9 +48,9 @@
      [sidebar-item-ui
       (rfe/href :admin.office-hours/list) 
       [:i.material-icons "switch_account"] 
-      "Jornada de trabalho"]]]])
-     ; [sidebar-item-ui
-     ;  (rfe/href :admin.comments/list) [:i.material-icons "comment"] "Comments"]]]])
+      "Jornada de trabalho"]
+     [sidebar-item-ui
+      (rfe/href :admin.comments/list) [:i.material-icons "comment"] "Comments"]]]])
 
 
 ;;; ---------------------------------------------------------------------------

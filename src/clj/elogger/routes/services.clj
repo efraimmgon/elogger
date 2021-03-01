@@ -156,38 +156,49 @@
                          (forbidden
                            {:error-msg "Action not permited for this user."})))}}]
     ["/{users/id}"
-     {:parameters {:path (s/keys :req [:users/id])}
-      :get {:summary "Return a user record by id."
-            :responses {200 {:body :users/User}}
-            :handler (fn [{:keys [parameters]}]
-                       (user/get-user
-                         (get-in parameters [:path :users/id])))}
-      :put {:summary "Update a user record with params."
-            :parameters {:body (s/keys :req  [:users/admin
-                                              :users/email
-                                              :users/is-active]
-                                       :opt  [:users/profile])}
-            :responses {200 {:body :result/Result}}
-            :handler (fn [{:keys [parameters] :as req}]
-                       (if (user/any-granted?
-                             (:identity req)
-                             (get-in parameters [:path :users/id]))
-                         (user/update-user-with-profile!
-                           (merge (:path parameters)
-                                  (:body parameters)))
-                         (forbidden
-                           {:error-msg "Action not permited for this user."})))}
-      :delete {:summary "Delete a user record by id."
-               :parameters {:path (s/keys :req [:users/id])}
-               :responses {200 {:body :result/Result}}
-               :handler (fn [{:keys [parameters] :as req}]
-                          (let [user-id (get-in parameters [:path :users/id])]
-                              (if (user/any-granted?
-                                    (:identity req)
-                                    user-id)
-                                (user/delete-user! user-id)
-                                (forbidden
-                                  {:error-msg "Action not permited for this user."}))))}}]]
+     {:parameters {:path (s/keys :req [:users/id])}}
+     [""
+      {:get {:summary "Return a user record by id."
+             :responses {200 {:body :users/User}}
+             :handler (fn [{:keys [parameters]}]
+                        (user/get-user
+                          (get-in parameters [:path :users/id])))}
+       :put {:summary "Update a user record with params."
+             :parameters {:body (s/keys :req  [:users/admin
+                                               :users/email
+                                               :users/is-active]
+                                        :opt  [:users/profile])}
+             :responses {200 {:body :result/Result}}
+             :handler (fn [{:keys [parameters] :as req}]
+                        (if (user/any-granted?
+                              (:identity req)
+                              (get-in parameters [:path :users/id]))
+                          (user/update-user-with-profile!
+                            (merge (:path parameters)
+                                   (:body parameters)))
+                          (forbidden
+                            {:error-msg "Action not permited for this user."})))}
+       :delete {:summary "Delete a user record by id."
+                :responses {200 {:body :result/Result}}
+                :handler (fn [{:keys [parameters] :as req}]
+                           (let [user-id (get-in parameters [:path :users/id])]
+                               (if (user/any-granted?
+                                     (:identity req)
+                                     user-id)
+                                 (user/delete-user! user-id)
+                                 (forbidden
+                                   {:error-msg "Action not permited for this user."}))))}}]
+     ["/office-hours"
+      {:get {:summary "Get all the user's info and office-hours rows for this user."
+             :responses {200 {:body :users/User}}
+             :handler (fn [{:keys [parameters] :as req}]
+                        (let [user-id (get-in parameters [:path :users/id])]
+                          (if (user/any-granted?
+                                (:identity req)
+                                user-id)
+                            (user/get-user-office-hours-by-user-id user-id)
+                            (forbidden
+                              {:error-msg "Action not permited for this user."}))))}}]]]
       
    ;; -----------------------------------------------------------------------
    ;; BLOG POSTS

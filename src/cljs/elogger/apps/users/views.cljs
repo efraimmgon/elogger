@@ -15,18 +15,18 @@
     (fn []
       [:div
        [form-group
-        "Username"
+        "Nome de usuário"
         [input {:type :text
                 :name (conj path :users/username)
                 :class "form-control"
                 :disabled true}]]
        [form-group
-         "First name"
+         "Primeiro nome"
          [input {:type :text
                  :name (conj path :users/profile :profile/first-name)
                  :class "form-control"}]]
        [form-group
-         "Last name"
+         "Sobrenome"
          [input {:type :text
                  :name (conj path :users/profile :profile/last-name)
                  :class "form-control"}]]
@@ -51,15 +51,15 @@
           [:div.name]
           [:div.col-md-6.ml-auto.mr-auto
            [card
-            {:title "Edit profile"
-             :content
+            {:title "Editar"
+             :body
              [:div
               [user-form-template path]]}]]]
          [:br]
          [:div.nav-tabs-navigation.text-center
           [:button.btn.btn-primary
            {:on-click #(rf/dispatch [:users/update-profile profile])}
-           "Update profile"] " "
+           "Salvar"] " "
           [:button.btn.btn-danger
            {:on-click #(rf/dispatch 
                          [:users/delete-user 
@@ -67,10 +67,10 @@
                            :handler (fn [resp]
                                       (dispatch-n [:auth/logout]
                                                   [:navigate! :home]))}])}
-           "Delete account"] " "
+           "Deletar"] " "
           [:button.btn.btn-secondary
            {:on-click #(rf/dispatch [:navigate (str "/users/" (:users/id @profile))])}
-           "Cancel"]]]]]]))
+           "Cancelar"]]]]]]))
 
 (defn profile-ui []
   (r/with-let [user (rf/subscribe [:identity])
@@ -93,7 +93,7 @@
              [:h4.title.text-center
               (if (seq @profile)
                 (full-name @profile)
-                "No user found.")]]]]]
+                "Usuário não encontrado.")]]]]]
          [:div.row
           [:div.col-md-6.ml-auto.mr-auto.text-center
            [:p (:bio @profile)]
@@ -104,6 +104,6 @@
                :href (rfe/href :profile/edit (select-keys @profile [:users/id]))}
                ;:on-click #(rf/dispatch [:navigate (str "/users/" (:users/id @profile) "/edit")])}
               [:i.fa.fa-cog]
-              " Edit profile"])]]
+              " Editar perfil"])]]
          [:br]
          [:div.nav-tabs-navigation]]]]]))

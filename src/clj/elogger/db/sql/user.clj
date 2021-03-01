@@ -93,6 +93,15 @@
 (defn create-office-hours! [params]
   (db/insert! "office_hours" params))
 
+(defn get-user-office-hours-by-user-id
+  "Return all the user's info and office hours rows."
+  [user-id]      
+  (let [user (parser {[:users/id user-id]
+                      (conj common/user-query
+                            {:users/office-hours common/office-hours-columns})})]                            
+    (when (s/valid? :users/User user)
+      user)))
+
 (defn get-users-office-hours-last-checkin
   ""
   []

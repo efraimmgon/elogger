@@ -75,6 +75,17 @@
                :keywords? true})
     nil))
 
+(reg-event-fx
+  :user.office-hours/list
+  base-interceptors
+  (fn [_ [user-id]]
+    (ajax/GET (str "/api/users/" user-id "/office-hours")
+              {:handler #(dispatch [:assoc-in [:user.office-hours/all] %])
+               :error-handler #(dispatch [:ajax-error %])
+               :response-format :json
+               :keywords? true})
+    nil))
+
 
 (reg-event-fx
  :users/load-profile-user
@@ -123,3 +134,4 @@
 (reg-sub :users/user query)
 (reg-sub :users/profile query)
 (reg-sub :users.office-hours/last-checkin query)
+(reg-sub :user.office-hours/all query)

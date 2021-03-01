@@ -193,3 +193,39 @@
          footer])]]
    [:div.modal-backdrop
     {:on-click #(rf/dispatch [:remove-modal])}]])
+
+; --------------------------------------------------------------------
+; PAGER
+; --------------------------------------------------------------------
+
+(defn forward [i page-count]
+  (if (< i (dec page-count)) (inc i) i))
+
+(defn back [i]
+  (if (pos? i) (dec i) i))
+
+(defn nav-link [current-page i]
+  [:li.page-item>a.page-link.btn.btn-primary
+   {:on-click #(reset! current-page i)
+    :class (when (= i @current-page) "active")}
+   [:span i]])
+
+(defn pager [page-count current-page]
+  (when (> page-count 1)
+    (into
+     [:div.text-xs-center>ul.pagination.pagination-lg]
+     (concat
+      [[:li.page-item>a.page-link.btn
+        {:on-click #(swap! current-page back page-count)
+         :class (when (= @current-page 0) "disabled")}
+        [:span "<<"]]]
+      (map (partial nav-link current-page) (range page-count))
+      [[:li.page-item>a.page-link.btn
+        {:on-click #(swap! current-page forward page-count)
+         :class (when (= @current-page (dec page-count)) "disabled")}
+        [:span ">>"]]]))))
+
+(comment
+  (let [current-page (atom 0)
+        page-count (atom [{:page 1} {:page 2}])]
+    [pager (count @page-count) current-page]))

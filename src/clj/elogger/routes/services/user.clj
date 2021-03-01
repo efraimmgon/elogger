@@ -134,6 +134,12 @@
   (response/ok
     (db/get-user-by-id id)))
 
+(defn get-user-office-hours-by-user-id
+  "Return all the user's info and office hours rows."
+  [user-id]
+  (response/ok
+    (db/get-user-office-hours-by-user-id user-id)))
+
 (defn get-users-office-hours-last-checkin
   "Return all users info with their last office hours checkin row."
   []

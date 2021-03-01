@@ -39,7 +39,7 @@
                 :name (conj path :users/email)
                 :class "form-control"}]]
        (let [attrs (if (:users/id @user)
-                     {:type :text, 
+                     {:type :password, 
                       :disabled true}
                      {:type :password})]
          [form-group

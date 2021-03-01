@@ -66,7 +66,12 @@
         {:parameters {:path {:users/id int?}}
          :name :admin.office-hours.user/list
          :view #'admin/view-user-office-hours-ui
-         :controllers [{:start #(rf/dispatch [:users.office-hours/list])}]}]]
+         :controllers [{:parameters {:path [:users/id]}
+                        :start (fn [path]
+                                 (rf/dispatch
+                                   [:user.office-hours/list
+                                    (js/parseInt
+                                      (get-in path [:path :users/id]))]))}]}]]
       ;;; ADMIN POSTS
       ["/posts"
        [""
