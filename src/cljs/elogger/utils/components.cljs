@@ -198,6 +198,10 @@
 ; PAGER
 ; --------------------------------------------------------------------
 
+(defn partition-links [n links]
+  (when (seq links)
+    (vec (partition-all n links))))
+
 (defn forward [i page-count]
   (if (< i (dec page-count)) (inc i) i))
 
@@ -205,25 +209,35 @@
   (if (pos? i) (dec i) i))
 
 (defn nav-link [current-page i]
-  [:li.page-item>a.page-link.btn.btn-primary
-   {:on-click #(reset! current-page i)
-    :class (when (= i @current-page) "active")}
-   [:span i]])
+  [:li.page-item
+   {:class (when (= i @current-page) "active")}
+   [:a.page-link
+    {:on-click #(reset! current-page i)}
+    (inc i)]])
 
 (defn pager [page-count current-page]
   (when (> page-count 1)
-    (into
-     [:div.text-xs-center>ul.pagination.pagination-lg]
-     (concat
-      [[:li.page-item>a.page-link.btn
-        {:on-click #(swap! current-page back page-count)
-         :class (when (= @current-page 0) "disabled")}
-        [:span "<<"]]]
-      (map (partial nav-link current-page) (range page-count))
-      [[:li.page-item>a.page-link.btn
-        {:on-click #(swap! current-page forward page-count)
-         :class (when (= @current-page (dec page-count)) "disabled")}
-        [:span ">>"]]]))))
+    [:nav {:aria-label "..."}
+     (into
+       [:ul.pagination.justify-content-center]
+       ;; "Previous" button
+       (concat 
+         [[:li.page-item
+           {:class (when (= @current-page 0) "disabled")}
+           [:a.page-link
+            {:on-click #(swap! current-page back page-count)}
+            "<<"]]]
+         ;; "Pages" buttons
+         (for [i (range page-count)]
+           ^{:key i}
+           [nav-link current-page i])
+         ;; "Next" button
+         [[:li.page-item
+           {:class (when (= @current-page (dec page-count)) "disabled")}
+           [:a.page-link
+            {:on-click #(swap! current-page forward page-count)}
+            ">>"]]]))]))
+
 
 (comment
   (let [current-page (atom 0)

@@ -6,6 +6,7 @@
     [elogger.apps.blog.views :as blog]
     [elogger.apps.pages.views :as pages]
     [elogger.apps.users.views :as users]
+    [elogger.utils.views :refer [page-ui]]
     [markdown.core :refer [md->html]]
     [reagent.core :as r]
     [re-frame.core :as rf]
@@ -32,7 +33,8 @@
      ["/admin"
       [""
        {:name :admin
-        :view #'admin/dashboard-ui}]
+        :view #(page-ui :admin)}]
+        
       ;;; ADMIN USERS
       ["/users"
        [""
@@ -60,18 +62,27 @@
       ["/office-hours"
        [""
         {:name :admin.office-hours/list
-         :view #'admin/office-hours-ui
+         :view #(page-ui :admin.office-hours/list)
+         ;:view #'admin/office-hours-ui
          :controllers [{:start #(rf/dispatch [:users.office-hours/last-checkin])}]}]
        ["/user/{users/id}"
         {:parameters {:path {:users/id int?}}
          :name :admin.office-hours.user/list
-         :view #'admin/view-user-office-hours-ui
+         ;:view #'admin/view-user-office-hours-ui
+         :view #(page-ui :admin.office-hours.user/list)
          :controllers [{:parameters {:path [:users/id]}
                         :start (fn [path]
                                  (rf/dispatch
                                    [:user.office-hours/list
                                     (js/parseInt
                                       (get-in path [:path :users/id]))]))}]}]]
+      ;;; ADMIN SETTINGS
+      ["/settings"
+       [""
+        {:name :admin/settings
+         :view #(page-ui :admin/settings)
+         :controllers [{:start #(rf/dispatch [:admin/load-settings])}]}]]
+      
       ;;; ADMIN POSTS
       ["/posts"
        [""

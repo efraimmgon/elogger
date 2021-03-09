@@ -1,6 +1,6 @@
 (ns elogger.apps.admin.comments
   (:require
-   [elogger.utils.components :refer
+   [elogger.utils.components :as c :refer
      [form-group card thead tbody]]
    [elogger.utils.forms :refer 
     [input textarea radio-input datetime-input-group]]
@@ -113,7 +113,7 @@
 
 (defn comments-tbody [all-comments]
   [tbody
-   (for [{:blog-post/keys [id comments]} @all-comments
+   (for [{:blog-post/keys [id comments]} all-comments
          {:threaded-comment/keys
           [author body created-at is-approved is-deleted]
           :as tcomment} comments]
@@ -142,20 +142,24 @@
       [:a {:href (rfe/href :blog/view {:blog-post/id id})}
        "View on site"]])])
 
-
 (defn comments-ui []
-  (r/with-let [all-comments (rf/subscribe [:comments/list])]
+  (r/with-let [current-page (r/atom 0)
+               all-comments (rf/subscribe [:comments/list])]
     [:div.row>div.col-md-12
      [card
       {:header
        [:h4 "Comments"]
        :body
        [:div
-        (if-not (seq @all-comments)
-           [:p "No comments yet."]
+        (if-let [comments (c/partition-links 2 @all-comments)]
            [:div
+            ;[c/pretty-display (comments @current-page)]
             [:div.clearfix]
+            [c/pager (count comments) current-page]
             [:div.table-responsive.table-full-width.text-center
              [:table.table.table-hover.table-striped
               [thead ["Author" "Body" "Created at" "Approved?" "Deleted?" ""]]
-              [comments-tbody all-comments]]]])]}]]))
+              [comments-tbody (comments @current-page)]]]
+            [c/pager (count comments) current-page]]
+           
+           [:p "No comments yet."])]}]]))

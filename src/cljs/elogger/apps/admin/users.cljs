@@ -122,7 +122,8 @@
    " Criar usuário"])
 
 (defn users-panel-ui []
-  (r/with-let [users (rf/subscribe [:users/list])]
+  (r/with-let [current-page (r/atom 0)
+               users (rf/subscribe [:users/list])]
    [:div.row>div.col-md-12
     [c/card
      {:header
@@ -133,35 +134,38 @@
       :body
       (if-not (seq @users)
         "Sem usuários ainda."
-        [:div
-         [:div.clearfix]
-         [:div.table-responsive.table-full-width
-          [:table.table.table-hover.table-striped.text-center
-           [c/thead ["Id" "Nome de usuário" "Email" "Último login" "Editar" "Deletar"]]
-           [:tbody
-            (doall
-              (for [user @users]
-                ^{:key (:users/id user)}
-                [:tr
-                 ;; Id
-                 [:td (:users/id user)]
-                 ;; Username
-                 [:td (:users/username user)]
-                 ;; Email
-                 [:td (:users/email user)]
-                 ;; Last login
-                 [:td (:users/last-login user)]
-                 ;; Edit
-                 [:td
-                  [:a.btn.btn-warning
-                   {:href (rfe/href :admin.user/edit (select-keys user [:users/id]))}
-                   [:i.material-icons "edit"]]]
-                 ;; Delete
-                 [:td
-                  [:button.btn.btn-danger
-                   {:on-click #(rf/dispatch 
-                                 [:users/delete-user 
-                                  {:users/id (:users/id user)
-                                   :handler (fn [resp]
-                                              (rf/dispatch [:users/load-users]))}])}
-                   [:i.material-icons "delete"]]]]))]]]])}]]))
+        (let [part-users (c/partition-links 10 @users)]
+          [:div
+           [c/pager (count part-users) current-page]
+           [:div.clearfix]
+           [:div.table-responsive.table-full-width
+            [:table.table.table-hover.table-striped.text-center
+             [c/thead ["Id" "Nome de usuário" "Email" "Último login" "Editar" "Deletar"]]
+             [:tbody
+              (doall
+                (for [user (part-users @current-page)]
+                  ^{:key (:users/id user)}
+                  [:tr
+                   ;; Id
+                   [:td (:users/id user)]
+                   ;; Username
+                   [:td (:users/username user)]
+                   ;; Email
+                   [:td (:users/email user)]
+                   ;; Last login
+                   [:td (:users/last-login user)]
+                   ;; Edit
+                   [:td
+                    [:a.btn.btn-warning
+                     {:href (rfe/href :admin.user/edit (select-keys user [:users/id]))}
+                     [:i.material-icons "edit"]]]
+                   ;; Delete
+                   [:td
+                    [:button.btn.btn-danger
+                     {:on-click #(rf/dispatch 
+                                   [:users/delete-user 
+                                    {:users/id (:users/id user)
+                                     :handler (fn [resp]
+                                                (rf/dispatch [:users/load-users]))}])}
+                     [:i.material-icons "delete"]]]]))]]]
+           [c/pager (count part-users) current-page]]))}]]))

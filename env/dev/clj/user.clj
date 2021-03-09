@@ -66,3 +66,4 @@
   (clojure.tools.namespace.repl/refresh)
   (reset-db)
   (create-migration "add-office-hours-table"))
+

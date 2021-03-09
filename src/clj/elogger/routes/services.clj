@@ -18,6 +18,7 @@
     [elogger.routes.services.like :as like]
     [elogger.routes.services.page :as page]
     [elogger.routes.services.user :as user]
+    [elogger.routes.services.settings :as settings]
     [elogger.utils :refer [string->date]]
     [ring.util.http-response :refer :all]
     [clojure.java.io :as io]))
@@ -25,6 +26,10 @@
 (defn admin? [{:keys [identity] :as req}]
   (and identity
        (:users/admin identity)))
+
+(defn forbidden-error []
+  (forbidden
+    {:error "Action not permitted for this user."}))
 
 (defn service-routes []
   ["/api"
@@ -101,8 +106,7 @@
                          (auth/checkin!
                            (assoc (:body parameters) :office-hours/user-agent
                              (get-in req [:headers "user-agent"])))
-                         (forbidden
-                           {:error-msg "Action not permitted for this user."})))}}]
+                         (forbidden-error)))}}]
    ["/checkout"
     {:post {:summary "Checks the user out of his office hours."
             :parameters {:body (s/keys :req [:office-hours/user-id
@@ -116,8 +120,24 @@
                          (auth/checkout!
                            (assoc (:body parameters) :office-hours/user-agent
                              (get-in req [:headers "user-agent"])))
-                         (forbidden
-                           {:error-msg "Action not permitted for this user."})))}}]
+                         (forbidden-error)))}}]
+   ["/admin/settings"
+    {:get {:summary "Returns the site's admin settings for the frontend."
+           :responses {200 {:body :admin/Settings}}
+           :handler (fn [req]
+                      (if (admin? req)
+                        (settings/get-admin-settings)
+                        (forbidden-error)))}
+     :put {:summary "Updates the site's admin settings."
+           :parameters {:body :admin/Settings}
+           :responses {200 {:body :result/Result}}
+           :handler (fn [{:keys [parameters] :as req}]
+                      (if (admin? req)
+                        (settings/update-admin-settings
+                          (:body parameters))
+                        (forbidden-error)))}}]
+                      
+                        
    
                          
                             
@@ -132,8 +152,7 @@
             :handler (fn [req]
                        (if (admin? req)
                          (user/get-users)
-                         (forbidden
-                           {:error-msg "Action not permited for this user."})))}
+                         (forbidden-error)))}
       :post {:summary "Create a user record in the db."
              :parameters {:body (s/keys :req [:users/username
                                               :users/password
@@ -153,8 +172,7 @@
             :handler (fn [req]
                        (if (admin? req)
                          (user/get-users-office-hours-last-checkin)
-                         (forbidden
-                           {:error-msg "Action not permited for this user."})))}}]
+                         (forbidden-error)))}}]
     ["/{users/id}"
      {:parameters {:path (s/keys :req [:users/id])}}
      [""
@@ -176,8 +194,7 @@
                           (user/update-user-with-profile!
                             (merge (:path parameters)
                                    (:body parameters)))
-                          (forbidden
-                            {:error-msg "Action not permited for this user."})))}
+                          (forbidden-error)))}
        :delete {:summary "Delete a user record by id."
                 :responses {200 {:body :result/Result}}
                 :handler (fn [{:keys [parameters] :as req}]
@@ -186,8 +203,7 @@
                                      (:identity req)
                                      user-id)
                                  (user/delete-user! user-id)
-                                 (forbidden
-                                   {:error-msg "Action not permited for this user."}))))}}]
+                                 (forbidden-error))))}}]
      ["/office-hours"
       {:get {:summary "Get all the user's info and office-hours rows for this user."
              :responses {200 {:body :users/User}}
@@ -197,8 +213,7 @@
                                 (:identity req)
                                 user-id)
                             (user/get-user-office-hours-by-user-id user-id)
-                            (forbidden
-                              {:error-msg "Action not permited for this user."}))))}}]]]
+                            (forbidden-error))))}}]]]
       
    ;; -----------------------------------------------------------------------
    ;; BLOG POSTS

@@ -23,14 +23,14 @@
   [user user-event]
   (let [current-user (rf/subscribe [:identity])
         user-event (rf/subscribe [:query [:user-event]])]
-    (when current-user
-      (if user-event
+    (when @current-user
+      (if @user-event
         (do (dispatch [:assoc-in [:user-event] nil])
             (println "Setting session timer.")
             (js/setTimeout #(session-timer) timeout-ms))
         (do (println "Session timeout. Logging user out.")
             (dispatch [:auth/logout])
-            (dispatch [:navigate "/"]))))))
+            (dispatch [:navigate! "/"]))))))
 
 (defn encode-auth
   [user pass]

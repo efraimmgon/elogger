@@ -122,6 +122,8 @@
 
 ;;; Core
 
+(defmulti page-ui identity)
+
 (defn base-ui [& forms]
   [with-deps
    {:deps (<sub [:main/deps])
