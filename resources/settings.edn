@@ -1,5 +1,6 @@
 {:office/title "Ikioi",
- :office/address "somewhere i belong",
- :office/longitude -54.88641301421277,
- :office/latitude -9.594908884696862,
+ :office/address
+ "Galeria Arya Florais Mall, Av. dos Florais, 678 - Condominio Florais Cuiaba Res., Cuiabá - Mato Grosso, 78049-420",
+ :office/longitude -56.098945371873725,
+ :office/latitude -15.542377268402173,
  :office/description "Cozinha oriental"}

@@ -27,7 +27,9 @@
      ;;; HOME
      ["/"
       {:name :home
-       :view #'auth/home-ui}]
+       :view #'auth/home-ui
+       :controllers [{:start
+                      #(rf/dispatch [:admin/load-settings])}]}]
      
      ;;; ADMIN
      ["/admin"

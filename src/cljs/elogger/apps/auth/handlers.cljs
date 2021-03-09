@@ -4,6 +4,7 @@
     [clojure.string :as string]
     [goog.crypt.base64 :as b64]
     [elogger.validation :refer [registration-errors]]
+    [elogger.apps.admin.utils :refer [distance]]
     [elogger.utils.events :refer [query base-interceptors dispatch-n]]
     [re-frame.core :as rf
      :refer [dispatch reg-event-db reg-event-fx reg-sub]]))
@@ -58,15 +59,26 @@
 (defn gcl-success [{:keys [location-timeout url handler current-user]}]
   (fn [position]
     (js/clearTimeout location-timeout)
-    (ajax/POST url
-               {:params {:office-hours/user-id (:users/id @current-user)
-                         :office-hours/lat (-> position .-coords .-latitude)
-                         :office-hours/lng (-> position .-coords .-longitude)}
-                :handler handler
-                :error-handler #(dispatch [:set-error (str (:response %))])
-                :finally #(loading-msg nil)
-                :response-format :json
-                :keywords? true})))
+    (let [settings (rf/subscribe [:admin/settings])
+          lat (-> position .-coords .-latitude)
+          lng (-> position .-coords .-longitude)
+          d (distance ((juxt :office/latitude :office/longitude) @settings)
+                      [lat lng])]
+      (if (or ;; The checkedin user can checkout from any place.
+              (:users/is-checkedin @current-user) 
+              ;; Minimum distance for the user to checkin.
+              (<= d 500))
+        (ajax/POST url
+                   {:params {:office-hours/user-id (:users/id @current-user)
+                             :office-hours/lat lat
+                             :office-hours/lng lng}
+                    :handler handler
+                    :error-handler #(dispatch [:set-error (str (:response %))])
+                    :finally #(loading-msg nil)
+                    :response-format :json
+                    :keywords? true})
+        (loading-msg (str "Você não pode iniciar a jornada sem antes chegar ao "
+                          "local de trabalho."))))))
 
 (defn gcl-fail [location-timeout]
   (fn [error]

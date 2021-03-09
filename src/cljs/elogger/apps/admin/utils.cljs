@@ -7,6 +7,23 @@
     [re-frame.core :as rf]
     [reitit.frontend.easy :as rfe]))
 
+(defn distance
+  "Takes two points (lat, lng) and returns the distance in meters between them."
+  [[lat1 lng1] [lat2 lng2]]
+  (let [sqr (fn [x] (* x x))
+        cos-deg (fn [x] (js/Math.cos (/ (* x js/Math.PI) 180.0)))
+        earth-cycle-perimeter (* 40000000.0
+                                 (cos-deg (/ (+ lat1 lat2)
+                                             2.0)))
+        dx (/ (* (- lng1 lng2) 
+                 earth-cycle-perimeter)
+              360.0)
+        dy (/ (* 39940651.0
+                 (- lat1 lat2))
+              360.0)]
+    (js/Math.sqrt (+ (sqr dx)
+                     (sqr dy)))))
+
 ;;; ---------------------------------------------------------------------------
 ;;; Views
 ;;; ---------------------------------------------------------------------------

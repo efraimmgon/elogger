@@ -125,9 +125,7 @@
     {:get {:summary "Returns the site's admin settings for the frontend."
            :responses {200 {:body :admin/Settings}}
            :handler (fn [req]
-                      (if (admin? req)
-                        (settings/get-admin-settings)
-                        (forbidden-error)))}
+                      (settings/get-admin-settings))}
      :put {:summary "Updates the site's admin settings."
            :parameters {:body :admin/Settings}
            :responses {200 {:body :result/Result}}
