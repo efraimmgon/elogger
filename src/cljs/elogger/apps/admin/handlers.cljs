@@ -22,10 +22,10 @@
 (rf/reg-event-fx
   :admin.settings/update
   base-interceptors
-  (fn [_ [settings]]
+  (fn [_ [settings status]]
     (ajax/PUT "/api/admin/settings"
               {:params @settings
-               :handler #()
+               :handler #(reset! status :disabled)
                :error-handler #(rf/dispatch [:ajax-error %])})
     nil))
 

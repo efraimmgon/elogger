@@ -34,7 +34,7 @@
 ; ------------------------------------------------------------------------------
 
 (s/def :result/result keyword?)
-(s/def :result/message string?)
+(s/def :result/message (or string? keyword?))
 
 (s/def :result/Result
        (s/keys :req-un [:result/result]

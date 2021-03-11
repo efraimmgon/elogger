@@ -100,6 +100,21 @@
        [:li.active title]
        [:li [:a {:href href} title]]))))
 
+(defn dismissible-alert [{:keys [attrs body]}]
+  [:div.alert.alert-dismissible.fade.show
+   (merge {:role "alert"} attrs)
+   body
+   [:button {:type "button"
+             :class "close"
+             :data-dismiss "alert"
+             :aria-label "Fechar"}
+    [:span {:aria-hidden "true"} "x"]]])
+   
+
+; ------------------------------------------------------------------------------
+; TABLE
+; ------------------------------------------------------------------------------
+
 (defn thead 
   ([headers] (thead nil headers))
   ([attrs headers]

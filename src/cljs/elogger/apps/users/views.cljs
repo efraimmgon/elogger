@@ -2,13 +2,57 @@
   (:require
     elogger.apps.users.handlers
     [elogger.utils.user :refer [full-name]]
-    [elogger.utils.components :refer [card form-group]]
+    [elogger.utils.components :as c :refer [card form-group]]
     [elogger.utils.events :refer [dispatch-n]]
     [elogger.utils.forms :refer [input]]
     [elogger.utils.views :refer [default-base-ui]]
     [reagent.core :as r]
     [re-frame.core :as rf]
     [reitit.frontend.easy :as rfe]))
+
+(defn update-password-modal []
+  (let [current-user (rf/subscribe [:identity])
+        path [:users/update-password]
+        fields (rf/subscribe path)]
+    (fn []
+      [c/modal
+       {:header [:h4 "Alterar a senha"]
+        :body
+        [:div
+         [form-group
+          "Senha atual"
+          [input {:type :password
+                  :name (conj path :users/old-password)
+                  :class "form-control"
+                  :auto-focus true}]]
+         [form-group
+          "Nova senha"
+          [input {:type :password
+                  :name (conj path :users/new-password)
+                  :class "form-control"}]]
+         [form-group
+          "Repetir nova senha"
+          [input {:type :password
+                  :name (conj path :users/confirm-password)
+                  :class "form-control"}]]]
+        :footer
+        [:div
+         [:button.btn.btn-primary
+          ;; TODO: on-click: check if new-password and confirm-password match
+          {:on-click #(rf/dispatch 
+                        [:auth/update-password 
+                         {:fields (select-keys (merge @fields @current-user)
+                                               [:users/id
+                                                :users/username
+                                                :users/old-password
+                                                :users/new-password])
+                          :path path}])}
+                                    
+                                           
+          "Confirmar"] " "
+         [:button.btn.btn-danger
+          {:on-click #(rf/dispatch [:remove-modal])}
+          "Cancelar"]]}])))
 
 (defn user-form-template [path]
   (let [user (rf/subscribe path)]
@@ -35,8 +79,11 @@
          "Email"
          [input {:type :email
                  :name (conj path :users/email)
-                 :class "form-control"}]]])))
-       ; TODO: change password
+                 :class "form-control"}]]
+       [:div.text-center
+         [:button.btn.btn-info
+          {:on-click #(rf/dispatch [:modal update-password-modal])}
+          "Alterar a senha"]]])))
 
 (defn edit-profile-ui []
   (r/with-let [path [:users/profile]
@@ -68,8 +115,9 @@
                                       (dispatch-n [:auth/logout]
                                                   [:navigate! :home]))}])}
            "Deletar"] " "
-          [:button.btn.btn-secondary
-           {:on-click #(rf/dispatch [:navigate (str "/users/" (:users/id @profile))])}
+          [:button.btn.btn-default
+           {:on-click #(rf/dispatch 
+                         [:navigate! :profile/view (select-keys @profile [:users/id])])} 
            "Cancelar"]]]]]]))
 
 (defn profile-ui []

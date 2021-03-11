@@ -103,8 +103,7 @@
   [identity user-id]
   (when identity
     (or (:users/admin identity)
-        (= (:users/id identity)
-           (:users/id (db/get-user-by-id user-id))))))
+        (= (:users/id identity) user-id))))
 
 (defn create-user!
   "Create a user record."

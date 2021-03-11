@@ -51,7 +51,7 @@
       [dropdown-nav-item
        (:users/username @current-user)
        [dnav-item {:href (rfe/href :profile/view (select-keys @current-user [:users/id]))}
-        "Profile"]
+        "Perfil"]
        (when (:users/admin @current-user)
          [dnav-item {:href (rfe/href :admin)}
           "Admin"])

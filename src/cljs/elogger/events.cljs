@@ -20,8 +20,7 @@
    (let [message (get-in response [:response :message])
          error (with-out-str
                  (cljs.pprint/pprint
-                   (:response response)))]
-         ;status-text (:get-in response [:response :status-text])]
+                   ((juxt :status-text :response) response)))]
      {:dispatch [:set-error (or message error)]})))
 
 (rf/reg-event-db
@@ -136,6 +135,7 @@
  :modal
  base-interceptors
  (fn [db [comp]]
+   (js/window.scrollTo #js {"top" 0 "left" 0 "behavior" "smooth"})
    (let [modal-stack (:modal db)]
      (if (seq modal-stack)
        (update db :modal conj comp)

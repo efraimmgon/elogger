@@ -8,10 +8,11 @@
     [re-frame.core :as rf]
     [reitit.frontend.easy :as rfe]))
 
-(defn settings-form [settings]
+(defn settings-form [settings status]
   (r/with-let [path [:admin/settings]]
     [:div
      [:fieldset
+      {:disabled (not= @status :edit)}
       [:legend "Dados do escritório"]
       [c/form-group
        "Nome"
@@ -24,6 +25,7 @@
                :name (conj path :office/description)
                :class "form-control"}]]]
      [:fieldset
+      {:disabled (not= @status :edit)}
       [:legend "Localização do escritório para checkin"]
       [c/form-group
        "Endereço"
@@ -43,17 +45,29 @@
     
 
 (defn settings-panel-ui []
-  (r/with-let [settings (rf/subscribe [:admin/settings])]
+  (r/with-let [status (r/atom :disabled)
+               settings (rf/subscribe [:admin/settings])]
     [:div.row>div.col-md-12
      [c/card
       {:header [:h4 "Configurações"]
        :body 
-       [settings-form settings]
+       [settings-form settings status]
        :footer
-       [:button.btn.btn-primary
-        {:on-click #(rf/dispatch
-                      [:admin.settings/update settings])}
-        "Atualizar"]}]]))
+       (cond
+         (= :edit @status)
+         [:button.btn.btn-primary
+          {:on-click #(do (rf/dispatch
+                            [:admin.settings/update settings status])
+                          (reset! status :updating))}
+          "Atualizar"]
+         (= :disabled @status)
+         [:button.btn.btn-primary
+          {:on-click #(reset! status :edit)}
+          "Clique para editar"]
+         (= :updating @status)
+         [:button.btn.btn-info
+          {:disabled true}
+          "Atualizando, aguarde..."])}]]))
        
 
 (defmethod page-ui :admin/settings [_]

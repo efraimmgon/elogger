@@ -20,6 +20,12 @@
                       :users/password
                       :users/password-confirm]))
 
+(s/def :auth/PasswordUpdate
+       (s/keys :req [:users/id
+                     :users/username
+                     :users/old-password
+                     :users/new-password]))
+
 ; ------------------------------------------------------------------------------
 ; Helpers
 ; ------------------------------------------------------------------------------  
@@ -56,6 +62,19 @@
         response/ok
         (assoc-in [:session :identity] user))))
 
+(defn update-password
+  "Updates the user's password, returning it."
+  [{:keys [session] :as req} 
+   {:users/keys [username new-password old-password id] :as params}]
+  (def params params)
+  (if-let [user (authenticate [username old-password])]
+    (let [pswrd (hashers/derive new-password)]
+      (db/update-user!
+        {:users/id id
+         :users/password pswrd})
+      (response/ok {:users/password pswrd}))
+    (response/precondition-failed {:result :error})))
+          
 (defn login!
   "Update user's last login and return the record if user exists and
   the credentials match. Otherwise, return response/unauthorized."

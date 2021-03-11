@@ -31,11 +31,13 @@
             (js/setTimeout #(session-timer) timeout-ms))
         (do (println "Session timeout. Logging user out.")
             (dispatch [:auth/logout])
-            (dispatch [:navigate! "/"]))))))
+            (dispatch [:navigate! :home]))))))
 
 (defn encode-auth
-  [user pass]
-  (->> (str user ":" pass)
+  [& args]
+  (->> args
+       (interpose ":")
+       (apply str)
        (b64/encodeString)
        (str "Basic ")))
 
@@ -137,6 +139,20 @@
       :response-format :json
       :keywords? true})
     nil))
+
+(reg-event-fx
+  :auth/update-password
+  base-interceptors
+  (fn [_ [{:keys [fields path]}]]
+    (ajax/POST (str "/api/update-password")
+              {:params fields
+               :handler (fn [pwrd]
+                          (rf/dispatch [:assoc-in [:identity :users/password] pwrd])
+                          (rf/dispatch [:assoc-in path nil]) ; clear form
+                          (rf/dispatch [:remove-modal]))
+               :error-handler #(rf/dispatch [:ajax-error %])})
+    nil))
+
 
 (reg-event-fx
  :auth/logout

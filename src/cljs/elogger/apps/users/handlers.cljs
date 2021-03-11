@@ -3,7 +3,7 @@
     [ajax.core :as ajax]
     [elogger.utils.events :refer 
      [query base-interceptors dispatch-n]]
-    [re-frame.core :refer [dispatch reg-event-fx reg-event-db reg-sub]]))
+    [re-frame.core :as rf :refer [dispatch reg-event-fx reg-event-db reg-sub]]))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Event handlers
@@ -135,3 +135,4 @@
 (reg-sub :users/profile query)
 (reg-sub :users.office-hours/last-checkin query)
 (reg-sub :user.office-hours/all query)
+(reg-sub :users/update-password query)

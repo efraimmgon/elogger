@@ -82,12 +82,22 @@
             :responses {200 {:body :result/Result}}
             :handler (fn [req]
                        (auth/logout!))}}]
+   ["/update-password"
+    {:post {:summary "Updates the user's password, returning it encrypted."
+            :parameters {:body :auth/PasswordUpdate}
+            :responses {200 {:body (s/keys :req [:users/password])}
+                        412 {:body :result/Result}}
+            :handler (fn [{:keys [parameters] :as req}]
+                       (auth/update-password req (:body parameters)))}}]
    ["/register"
     {:post {:summary "Create a new user and profile records, loggin the user in"
             :parameters {:body :auth/UserRegistration}
             :responses {200 {:body :users/User}}
             :handler (fn [{:keys [parameters] :as req}]
-                       (auth/register! req (:body parameters)))}}]
+                       (if (admin? req)
+                         (auth/register! req (:body parameters))
+                         (forbidden-error)))}}]
+                            
    ["/authenticated"
     {:get {:summary "Is the user logged in?"
            :handler (fn [req]
