@@ -20,6 +20,7 @@
                  [cprop "0.1.16"]
                  [day8.re-frame/http-fx "0.1.6"]
                  [expound "0.8.4"]
+                 [faker "0.2.2"]
                  [funcool/struct "1.4.0"]
                  [luminus-jetty "0.1.9"]
                  [luminus-migrations "0.6.7"]
