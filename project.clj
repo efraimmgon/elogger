@@ -34,6 +34,7 @@
                  [nrepl "0.7.0"]
                  [org.clojure/clojure "1.10.1"]
                  [org.clojure/clojurescript "1.10.764" :scope "provided"]
+                 [org.clojure/core.async "1.3.610"]
                  [org.clojure/tools.cli "1.0.194"]
                  [org.clojure/tools.logging "1.0.0"]
                  [org.postgresql/postgresql "42.2.11"]
