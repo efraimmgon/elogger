@@ -2,8 +2,10 @@
   (:require
     [clojure.spec.alpha :as s]
     [clojure.tools.logging :as log]
+    [elogger.db.common :refer [q]]
     [elogger.db.pathom :refer [parser]]
     [elogger.db.sql.common :as sqlcommon]
+    elogger.db.sql.settings
     [elogger.routes.services.common :as common]
     [ring.util.http-response :as response]))
 
@@ -25,31 +27,30 @@
 
 (s/def :admin/Settings :office/Office)
 
+(def office-columns
+  ["office_title"
+   "office_description"
+   "office_address"
+   "office_latitude"
+   "office_longitude"])
+
 ;;; ---------------------------------------------------------------------------
 ;;; ROUTES
 
-(defn read-resource [filename]
-  (-> filename
-      clojure.java.io/resource
-      slurp
-      clojure.edn/read-string))
-
-(defn write-resource [filename content]
-  (spit 
-    (clojure.java.io/resource filename)
-    (with-out-str 
-      (clojure.pprint/pprint
-        content))))
-
 (defn get-admin-settings []
   (response/ok
-    (read-resource "settings.edn")))
+    (q :settings/get-admin-settings office-columns)))
 
 (defn update-admin-settings [params]
-  (write-resource "settings.edn" params)
-  (response/ok
-    {:result :ok}))
+  (jdbc/with-transaction [tx db/*db*]
+    (binding [db/*db* tx]
+      (let [settings (q :settings/get-admin-settings)]
+        (doseq [[k v] params]
+          (let [m {:app-settings/name (str (namespace k) "_" (name k))
+                   :app-settings/value v}]
+            (if (seq settings)
+              (q :settings/update-admin-settings m)
+              (q :settings/create-admin-settings m)))))
+      (response/ok
+        {:result :ok}))))
 
-(comment
-  (read-resource "settings.edn")
-  (write-resource "settings.edn" {}))

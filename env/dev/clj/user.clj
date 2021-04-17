@@ -1,7 +1,7 @@
 (ns user
   "Userspace functions you can run by default in your local REPL."
   (:require
-   [elogger.config :refer [env]]
+    [elogger.config :refer [env]]
     [clojure.pprint]
     [clojure.spec.alpha :as s]
     [expound.alpha :as expound]
@@ -11,10 +11,6 @@
     [elogger.db.core]
     [conman.core :as conman]
     [luminus-migrations.core :as migrations]))
-
-(alter-var-root #'s/*explain-out* (constantly expound/printer))
-
-(add-tap (bound-fn* clojure.pprint/pprint))
 
 (defn start
   "Starts application.

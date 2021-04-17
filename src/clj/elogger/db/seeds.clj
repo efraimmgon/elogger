@@ -4,6 +4,7 @@
    [faker.name :as fname]
    [faker.internet :as finternet]
    [faker.lorem :as florem]
+   [elogger.config :refer [env]]
    [elogger.db.core :as db :refer [*db*]]
    [elogger.db.pathom :refer [parser]]
    [elogger.db.sql.common :as common]
