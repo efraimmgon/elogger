@@ -9,6 +9,32 @@
    [elogger.utils.views :refer [login-base-ui]]))
 
 
+(defn stats-modal []
+  (let [stats (rf/subscribe [:users.office-hours/stats])]
+    (fn []
+      [c/modal
+       {:header [:h4 "Horas trabalhadas por mês"]
+        :body
+        [:div
+         (if (seq @stats)
+          [:table.table.table-striped.text-center
+           [c/thead ["Ano" "Mês" "Horas"]]
+           [:tbody
+            (doall
+              (for [[[year month] hours] @stats]
+                ^{:key (gensym)}
+                [:tr
+                 [:td year]
+                 [:td month]
+                 [:td hours]]))]]
+          "Nada para mostrar ainda.")]
+        :footer
+        [:div
+         [:button.btn.btn-default 
+          {:on-click #(rf/dispatch [:remove-modal])}
+          "Voltar"]]}])))
+
+
 (defn login-form-body [path]
   [:div.card-body
    [:div.input-group
@@ -50,6 +76,7 @@
         loading-msg? (rf/subscribe [:query [:auth.check.notify/loading]])
         geolocation-off? (rf/subscribe [:query [:auth.checkin/geolocation-off?]])
         error (rf/subscribe [:query [:auth.checkin/error]])]
+    (rf/dispatch [:users.office-hours/load-stats (:users/id @current-user)])
     (fn []
       [:div.card.card-login
        [:form.form
@@ -70,6 +97,9 @@
             [:div.alert.alert-warning
              @loading-msg?])]
         [:div.footer.text-center
+         [:a.btn.btn-link.btn-info.btn-wd.btn-lg
+          {:on-click #(rf/dispatch [:modal stats-modal])}
+          "Histórico"]
          (if (:users/is-checkedin @current-user)
            [:a.btn.btn-primary.btn-link.btn-wd.btn-lg.btn-danger
             {:on-click #(rf/dispatch-sync

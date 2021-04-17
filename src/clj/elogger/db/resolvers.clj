@@ -65,7 +65,6 @@
   (db/execute-one!
     ["SELECT * FROM office_hours oh 
      WHERE oh.user_id = ? AND oh.status = 'checkin'
-     ORDER BY oh.created_at DESC
      LIMIT 1" id]))
 
 ;;; RESOLVERS -------

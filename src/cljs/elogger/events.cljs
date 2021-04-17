@@ -37,7 +37,8 @@
 
 (rf/reg-event-db
   :common/navigate
-  (fn [db [_ match]]
+  base-interceptors
+  (fn [db [match]]
     (let [old-match (:common/route db)
           new-match (assoc match :controllers
                                  (rfc/apply-controllers (:controllers old-match) match))]
@@ -50,7 +51,8 @@
 
 (rf/reg-event-fx
   :navigate!
-  (fn [_ [_ url-key params query]]
+  base-interceptors
+  (fn [_ [url-key params query]]
     {:common/navigate-fx! [url-key params query]}))
 
 (rf/reg-event-db
@@ -125,10 +127,7 @@
   :init!
   base-interceptors
   (fn [{:keys [db]} _]
-    {:dispatch-n [[:add-deps!]
-                  ;; TODO: remove before deploy
-                  [:auth/login {:params (atom {:users/username "admin"
-                                               :users/password "admin"})}]]
+    {:dispatch-n [[:add-deps!]]
      :db (merge db default-db)}))
 
 (rf/reg-event-db
@@ -137,6 +136,8 @@
  (fn [db [comp]]
    (js/window.scrollTo #js {"top" 0 "left" 0 "behavior" "smooth"})
    (let [modal-stack (:modal db)]
+     (if (seq modal-stack)
+       (prn "seq") (prn "not-seq"))
      (if (seq modal-stack)
        (update db :modal conj comp)
        (assoc db :modal [comp])))))

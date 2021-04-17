@@ -28,9 +28,8 @@
      ["/"
       {:name :home
        :view #'auth/home-ui
-       :controllers [{:start
-                      #(rf/dispatch [:admin/load-settings])}]}]
-     
+       :controllers [{:start (fn [path]
+                               (rf/dispatch [:admin/load-settings]))}]}]
      ;;; ADMIN
      ["/admin"
       [""
@@ -75,9 +74,12 @@
          :controllers [{:parameters {:path [:users/id]}
                         :start (fn [path]
                                  (rf/dispatch
-                                   [:user.office-hours/list
+                                   [:users.office-hours/list
                                     (js/parseInt
-                                      (get-in path [:path :users/id]))]))}]}]]
+                                      (get-in path [:path :users/id]))])
+                                 (rf/dispatch
+                                   [:users.office-hours/load-stats
+                                    (get-in path [:path :users/id])]))}]}]]
       ;;; ADMIN SETTINGS
       ["/settings"
        [""

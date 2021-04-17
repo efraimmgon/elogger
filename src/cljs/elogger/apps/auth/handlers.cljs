@@ -133,8 +133,8 @@
                 (encode-auth (string/trim (:users/username @params))
                              (:users/password @params))}
       :handler (fn [user]
-                 (dispatch-n [:set-identity user] [:assoc-in path nil])
-                 (js/setTimeout session-timer timeout-ms))
+                 (dispatch-n [:set-identity user] [:assoc-in path nil]))
+                 ;(js/setTimeout session-timer timeout-ms))
       :error-handler #(dispatch [:set-error %])
       :response-format :json
       :keywords? true})

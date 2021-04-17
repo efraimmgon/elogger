@@ -103,9 +103,9 @@
       user)))
 
 (defn get-users-office-hours-last-checkin
-  ""
+  "Return all users info with their last office hours checkin row."
   []
-  (some->
+  (some->>
     {[:users/all]
      [{:users/list (conj common/user-query 
                          {:users/last-checkin common/office-hours-columns})}]}

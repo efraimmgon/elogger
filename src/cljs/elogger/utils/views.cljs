@@ -7,11 +7,15 @@
     [reagent.core :as r]
     [reitit.frontend.easy :as rfe]))
 
-(defn modal-ui []
-  (when-let [modal-comp (<sub [:modal])]
+(defn modal-ui 
+  "Component to display the currently active modal."
+  []
+  (when-let [modal-comp @(rf/subscribe [:modal])]
     [modal-comp]))
 
-(defn error-modal-ui []
+(defn error-modal-ui 
+  "Component to display the currently error (on a modal)."
+  []
   (when-let [error (<sub [:common/error])]
     [c/modal
      {:header
@@ -122,11 +126,17 @@
 
 ;;; Core
 
-(defmulti page-ui identity)
+(defmulti page-ui 
+  "Multimethod to dispatch the router views based on its (keyword) name."
+  identity)
 
-(defn base-ui [& forms]
+(defn base-ui
+  "Base component to be used for the pages. Loads the common components, in
+  the :main/deps sub."
+  [& forms]
   [with-deps
    {:deps (<sub [:main/deps])
+    ;; TODO: improve `loading` msg.
     :loading [:div.loading "loading ..."]
     :loaded (into
              [:div.wrapper
@@ -134,7 +144,9 @@
               [error-modal-ui]]
              forms)}])
 
-(defn default-base-ui [body]
+(defn default-base-ui 
+  "Wraps `base-ui` with a navbar and footer, taking a body component."
+  [body]
   [base-ui
    [navbar]
    body

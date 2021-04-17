@@ -213,15 +213,26 @@
                                  (user/delete-user! user-id)
                                  (forbidden-error))))}}]
      ["/office-hours"
-      {:get {:summary "Get all the user's info and office-hours rows for this user."
-             :responses {200 {:body :users/User}}
-             :handler (fn [{:keys [parameters] :as req}]
-                        (let [user-id (get-in parameters [:path :users/id])]
-                          (if (user/any-granted?
-                                (:identity req)
-                                user-id)
-                            (user/get-user-office-hours-by-user-id user-id)
-                            (forbidden-error))))}}]]]
+      [""
+       {:get {:summary "Get all the user's info and office-hours rows for this user."
+              :responses {200 {:body :users/User}}
+              :handler (fn [{:keys [parameters] :as req}]
+                         (let [user-id (get-in parameters [:path :users/id])]
+                           (if (user/any-granted?
+                                 (:identity req)
+                                 user-id)
+                             (user/get-user-office-hours-by-user-id user-id)
+                             (forbidden-error))))}}]
+      ["/stats"
+       {:get {:summary "Returns the office-hours stats for a given user."
+              :handler (fn [{:keys [parameters] :as req}]
+                         (let [user-id (get-in parameters [:path :users/id])]
+                           (if (user/any-granted?
+                                 (:identity req)
+                                 user-id)
+                             (user/get-hours-worked-per-month-by-user-id user-id)
+                             (forbidden-error))))}}]]]]
+                               
       
    ;; -----------------------------------------------------------------------
    ;; BLOG POSTS

@@ -1,6 +1,9 @@
 (ns elogger.routes.services.user
   (:require
     [buddy.hashers :as hashers]
+    [clj-time.core :as t]
+    [clj-time.coerce :as c]
+    [java-time :as jt]
     [clojure.spec.alpha :as s]
     [clojure.tools.logging :as log]
     [elogger.db.pathom :refer [parser]]
@@ -125,7 +128,8 @@
   "Return all user recods."
   []
   (response/ok
-    (db/get-users)))
+    (sort-by :users/last-login #(compare %2 %1)
+      (db/get-users))))
 
 (defn get-user
   "Return a user record by id."
@@ -139,11 +143,31 @@
   (response/ok
     (db/get-user-office-hours-by-user-id user-id)))
 
+(defn get-hours-worked-per-month-by-user-id 
+  "Takes a user-id and returns the hours worked grouped by year+month."
+  [user-id]
+  (let [minutes-per-interval (fn [[a b]]
+                               (jt/as (jt/duration a b) :minutes))
+        groups
+        (->> (db/get-user-office-hours-by-user-id user-id)
+             :users/office-hours
+             (map :office-hours/created-at)
+             reverse
+             (partition 2)
+             (group-by (juxt #(jt/as (first %) :year) #(jt/as (first %) :month-of-year))))]
+    (response/ok
+      (reduce (fn [acc [k v]]
+                (let [mins (apply + (map minutes-per-interval v))
+                      hours (/ mins 60.0)]
+                  (conj acc [k hours])))
+              [] groups))))
+
 (defn get-users-office-hours-last-checkin
   "Return all users info with their last office hours checkin row."
   []
-  (response/ok
-    (db/get-users-office-hours-last-checkin)))
+  (->> (db/get-users-office-hours-last-checkin)
+       (sort-by (comp :office-hours/created-at :users/last-checkin) #(compare %2 %1))
+       response/ok))
 
 (defn update-user!
   "Update a user record by id."

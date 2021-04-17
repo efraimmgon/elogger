@@ -8,7 +8,8 @@
     [reitit.frontend.easy :as rfe]))
 
 (defn view-user-office-hours-panel-ui []
-  (r/with-let [user-oh (rf/subscribe [:user.office-hours/all])
+  (r/with-let [user-oh (rf/subscribe [:users.office-hours/all])
+               stats (rf/subscribe [:users.office-hours/stats])
                current-page (r/atom 0)]
     [:div.row>col-md-12
      
@@ -19,6 +20,16 @@
          "Nada para mostrar ainda."
          (let [part-user-oh (c/partition-links 10 (:users/office-hours @user-oh))]
            [:div
+             [:h5.text-center "Horas trabalhadas por mês"]
+             [:table.table.table-striped.text-center
+              [c/thead ["Ano" "Mês" "Horas"]]
+              [:tbody
+               (doall
+                 (for [[[year month] hours] @stats]
+                   [:tr
+                    [:td year]
+                    [:td month]
+                    [:td hours]]))]]
              [c/pager (count part-user-oh) current-page]
              [:table.table.table-striped.text-center
               [c/thead ["id" "status" "latitude" "longitude" "data/hora" "user-agent"]]

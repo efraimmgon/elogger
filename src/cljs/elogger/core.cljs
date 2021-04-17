@@ -33,8 +33,8 @@
                [:div#nav-menu.navbar-menu
                 {:class (when @expanded? :is-active)}
                 [:div.navbar-start
-                 [nav-link "#/" "Home" :home]
-                 [nav-link "#/about" "About" :about]]]]))
+                 [nav-link (rfe/href :home) "Home" :home]
+                 [nav-link (rfe/href :about) "About" :about]]]]))
 
 
 
@@ -50,7 +50,6 @@
 
 (defn navigate! [match _]
   (rf/dispatch [:common/navigate match]))
-
 
 (defn start-router! []
   (rfe/start!
