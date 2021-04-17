@@ -12,10 +12,15 @@
     [create-user-with-profile! get-users]] 
    [elogger.db.sql.blog-post :as blog-post :refer [create-post!]]
    [elogger.db.sql.page :refer [create-page!]]
-   [user :refer [reset-db]]))
+   [luminus-migrations.core :as migrations]))
 
 ; -----------------------------------------------------------------------------
 ; Helpers
+
+(defn reset-db
+  "Resets database."
+  []
+  (migrations/migrate ["reset"] (select-keys env [:database-url])))
 
 
 (defn now []
