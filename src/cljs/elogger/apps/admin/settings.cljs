@@ -17,12 +17,12 @@
       [c/form-group
        "Nome"
        [input {:type :text
-               :name (conj path :office/title)
+               :name (conj path :app-settings/office-title)
                :class "form-control"}]]
       [c/form-group
        "Descrição"
        [input {:type :text
-               :name (conj path :office/description)
+               :name (conj path :app-settings/office-description)
                :class "form-control"}]]]
      [:fieldset
       {:disabled (not= @status :edit)}
@@ -30,17 +30,17 @@
       [c/form-group
        "Endereço"
        [input {:type :text
-               :name (conj path :office/address)
+               :name (conj path :app-settings/office-address)
                :class "form-control"}]]
       [c/form-group
        "Latitude"
        [input {:type :number
-               :name (conj path :office/latitude)
+               :name (conj path :app-settings/office-latitude)
                :class "form-control"}]]
       [c/form-group
        "Longitude"
        [input {:type :number
-               :name (conj path :office/longitude)
+               :name (conj path :app-settings/office-longitude)
                :class "form-control"}]]]]))
     
 

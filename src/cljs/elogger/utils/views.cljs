@@ -20,9 +20,7 @@
     [c/modal
      {:header
       "An error has occured"
-      :body
-       [:div;.alert.bg-danger
-        [:pre error]]
+      :body [c/pretty-display error]
       :footer
        [:div
         [:button.btn.btn-sm.btn-danger

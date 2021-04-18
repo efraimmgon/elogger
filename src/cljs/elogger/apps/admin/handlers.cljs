@@ -13,10 +13,11 @@
   base-interceptors
   (fn [_ _]
     (ajax/GET "/api/admin/settings"
-              {:handler #(rf/dispatch [:assoc-in [:admin/settings] %])
-               :error-handler #(rf/dispatch [:set-error %])
-               :response-format :json
-               :keywords? true})
+              {:handler #(when (seq %)
+                           (rf/dispatch [:assoc-in [:admin/settings] %]))
+               :error-handler #(rf/dispatch [:set-error %])})
+               ;:response-format :json
+               ;:keywords? true})
     nil))
 
 (rf/reg-event-fx

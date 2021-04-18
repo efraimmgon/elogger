@@ -64,10 +64,11 @@
     (let [settings (rf/subscribe [:admin/settings])
           lat (-> position .-coords .-latitude)
           lng (-> position .-coords .-longitude)
-          d (distance ((juxt :office/latitude :office/longitude) @settings)
+          d (distance ((juxt :app-settings/office-latitude 
+                             :app-settings/office-longitude) @settings)
                       [lat lng])]
       (if (or ;; The checkedin user can checkout from any place.
-              (:users/is-checkedin @current-user) 
+              (:users/is-checkedin @current-user)
               ;; Minimum distance for the user to checkin.
               (<= d 500))
         (ajax/POST url
