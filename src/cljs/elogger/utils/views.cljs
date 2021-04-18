@@ -79,7 +79,7 @@
       [:div.navbar-translate
        [:a.navbar-brand
         {:href "/"}
-        "Laconic CMS "]
+        "Elogger "]
        [:button.navbar-toggler
         {:aria-label "Toggle navigation",
          :aria-expanded "false",
@@ -99,7 +99,7 @@
       [:li
        [:a
         {:href "https://www.creative-tim.com/"}
-        "Laconic CMS"]]
+        "Elogger"]]
       [:li
        [:a
         {:href "https://www.creative-tim.com/presentation"}
